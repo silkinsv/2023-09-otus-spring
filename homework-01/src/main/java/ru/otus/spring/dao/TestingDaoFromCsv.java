@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,14 +54,14 @@ public class TestingDaoFromCsv implements TestingDao {
     private Question generateQuestionFromString(String line) {
         String[] elements = line.split(SEPARATOR_QUESTION);
         List<Integer> correctAnswerList = new ArrayList<>();
-        String[] correctAnswerStringList = elements[elements.length-1].split(SEPARATOR_CORRECT_ANSWER);
+        String[] correctAnswerStringList = elements[elements.length - 1].split(SEPARATOR_CORRECT_ANSWER);
 
-        for(String str : correctAnswerStringList) {
+        for (String str : correctAnswerStringList) {
             correctAnswerList.add(Integer.parseInt(str));
         }
 
         List<Answer> answers = new ArrayList<>();
-        for(int i = 1; i< elements.length - 1; i++) {
+        for (int i = 1; i < elements.length - 1; i++) {
             Answer answer = new Answer(elements[i], correctAnswerList.contains(i));
             answers.add(answer);
         }
