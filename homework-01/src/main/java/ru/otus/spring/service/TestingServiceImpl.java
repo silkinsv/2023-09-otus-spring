@@ -1,21 +1,25 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dao.TestingDao;
-import ru.otus.spring.domain.Testing;
+import ru.otus.spring.dao.QuestionDao;
+import ru.otus.spring.domain.Question;
+
+import java.util.List;
 
 public class TestingServiceImpl implements TestingService {
-    private final TestingDao testingDao;
+    private final QuestionDao questionDao;
+    private final IOService ioService;
 
-    public TestingServiceImpl(TestingDao testingDao) {
-        this.testingDao = testingDao;
+    public TestingServiceImpl(QuestionDao questionDao, IOService ioService) {
+        this.questionDao = questionDao;
+        this.ioService = ioService;
     }
 
     public void printAllQuestions() {
-        Testing test = testingDao.find();
-        test.getQuestions().forEach(q -> {
-            System.out.println(q.getText());
+        List<Question> questions = questionDao.getAll();
+        questions.forEach(q -> {
+            ioService.println(q.getText());
             q.getAnswers().forEach(a -> {
-                System.out.println("* " + a.getText());
+                ioService.println("* " + a.getText());
             });
         });
     }

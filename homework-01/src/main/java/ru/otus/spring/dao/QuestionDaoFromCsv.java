@@ -2,8 +2,6 @@ package ru.otus.spring.dao;
 
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
-import ru.otus.spring.domain.Testing;
-import ru.otus.spring.service.LoadTestingService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,43 +9,41 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.spring.exeption.ResourceCsvEx;
 
-public class TestingDaoFromCsv implements TestingDao {
+public class QuestionDaoFromCsv implements QuestionDao {
+    private final String path;
     private final static String SEPARATOR_QUESTION = ";";
     private final static String SEPARATOR_CORRECT_ANSWER = ",";
-    private static final Logger logger = LoggerFactory.getLogger(TestingDaoFromCsv.class);
-    private final LoadTestingService service;
+    private static final Logger logger = LoggerFactory.getLogger(QuestionDaoFromCsv.class);
 
-    public TestingDaoFromCsv(LoadTestingService service) {
-        this.service = service;
+    public QuestionDaoFromCsv(String path) {
+        this.path = path;
     }
 
-    public Testing find() {
-        InputStream stream = service.loadTesting();
+    public List<Question> getAll() {
+        ClassLoader classLoader = getClass().getClassLoader();
 
-        if (stream == null) {
-            throw new IllegalArgumentException("resource file does not exist!");
-        }
+        try(InputStream inputStream = classLoader.getResourceAsStream(path);
+            InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(streamReader)) {
+                String line;
+                List<Question> questions = new ArrayList<>();
 
-        try (InputStreamReader streamReader =
-                     new InputStreamReader(stream, StandardCharsets.UTF_8);
-             BufferedReader reader = new BufferedReader(streamReader)) {
+                while ((line = reader.readLine()) != null) {
+                    questions.add(generateQuestionFromString(line));
+                }
 
-            String line;
-            List<Question> questions = new ArrayList<>();
-
-            while ((line = reader.readLine()) != null) {
-                questions.add(generateQuestionFromString(line));
-            }
-
-            return new Testing(questions);
+                return questions;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return null;
+            throw new ResourceCsvEx(e.getMessage());
         }
     }
 

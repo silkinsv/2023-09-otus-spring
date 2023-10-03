@@ -3,16 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="loadTestingService" class="ru.otus.spring.service.LoadTestingServiceImpl">
+    <bean id="ioService" class="ru.otus.spring.service.ConsoleIOService" />
+
+    <bean id="questionDao" class="ru.otus.spring.dao.QuestionDaoFromCsv">
         <constructor-arg index="0" value="testing.csv" />
     </bean>
 
-    <bean id="testingDao" class="ru.otus.spring.dao.TestingDaoFromCsv">
-        <constructor-arg index="0" ref="loadTestingService" />
-    </bean>
-
     <bean id="testingService" class="ru.otus.spring.service.TestingServiceImpl">
-        <constructor-arg index="0" ref="testingDao" />
+        <constructor-arg index="0" ref="questionDao" />
+        <constructor-arg index="1" ref="ioService" />
     </bean>
 
 </beans>
