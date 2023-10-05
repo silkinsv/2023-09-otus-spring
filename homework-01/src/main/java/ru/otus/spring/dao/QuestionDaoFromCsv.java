@@ -43,7 +43,7 @@ public class QuestionDaoFromCsv implements QuestionDao {
                 return questions;
         } catch (IOException e) {
             logger.error(e.getMessage());
-            throw new ResourceCsvEx(e.getMessage());
+            throw new ResourceCsvEx(e.getMessage(), e);
         }
     }
 
