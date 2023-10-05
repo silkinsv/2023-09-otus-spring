@@ -2,6 +2,7 @@ package ru.otus.spring.domain;
 
 public class Answer {
     private final String text;
+
     private final boolean isCorrect;
 
     public Answer(String text, boolean isCorrect) {

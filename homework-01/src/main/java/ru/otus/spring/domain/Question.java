@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Question {
     private final String text;
+
     private final List<Answer> answers;
 
     public Question(String text, List<Answer> answers) {

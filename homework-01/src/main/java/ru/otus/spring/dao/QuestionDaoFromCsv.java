@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,10 +17,13 @@ import org.slf4j.LoggerFactory;
 import ru.otus.spring.exeption.ResourceCsvEx;
 
 public class QuestionDaoFromCsv implements QuestionDao {
-    private final String path;
     private final static String SEPARATOR_QUESTION = ";";
+
     private final static String SEPARATOR_CORRECT_ANSWER = ",";
-    private static final Logger logger = LoggerFactory.getLogger(QuestionDaoFromCsv.class);
+
+    private final String path;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuestionDaoFromCsv.class);
 
     public QuestionDaoFromCsv(String path) {
         this.path = path;
@@ -31,7 +33,8 @@ public class QuestionDaoFromCsv implements QuestionDao {
         ClassLoader classLoader = getClass().getClassLoader();
 
         try(InputStream inputStream = classLoader.getResourceAsStream(path);
-            InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
+            InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream)
+                    , StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(streamReader)) {
                 String line;
                 List<Question> questions = new ArrayList<>();
@@ -42,7 +45,7 @@ public class QuestionDaoFromCsv implements QuestionDao {
 
                 return questions;
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             throw new ResourceCsvEx(e.getMessage(), e);
         }
     }
