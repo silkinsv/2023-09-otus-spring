@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory;
 import ru.otus.spring.exeption.ResourceCsvEx;
 
 public class QuestionDaoFromCsv implements QuestionDao {
-    private final static String SEPARATOR_QUESTION = ";";
+    private static final String SEPARATOR_QUESTION = ";";
 
-    private final static String SEPARATOR_CORRECT_ANSWER = ",";
-
-    private final String path;
+    private static final String SEPARATOR_CORRECT_ANSWER = ",";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionDaoFromCsv.class);
+
+    private final String path;
 
     public QuestionDaoFromCsv(String path) {
         this.path = path;
@@ -32,18 +32,18 @@ public class QuestionDaoFromCsv implements QuestionDao {
     public List<Question> getAll() {
         ClassLoader classLoader = getClass().getClassLoader();
 
-        try(InputStream inputStream = classLoader.getResourceAsStream(path);
-            InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream)
-                    , StandardCharsets.UTF_8);
-            BufferedReader reader = new BufferedReader(streamReader)) {
-                String line;
-                List<Question> questions = new ArrayList<>();
+        try (InputStream inputStream = classLoader.getResourceAsStream(path);
+             InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream)
+                     , StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(streamReader)) {
+            String line;
+            List<Question> questions = new ArrayList<>();
 
-                while ((line = reader.readLine()) != null) {
-                    questions.add(generateQuestionFromString(line));
-                }
+            while ((line = reader.readLine()) != null) {
+                questions.add(generateQuestionFromString(line));
+            }
 
-                return questions;
+            return questions;
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             throw new ResourceCsvEx(e.getMessage(), e);
