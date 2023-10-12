@@ -9,6 +9,7 @@ import ru.otus.spring.domain.TestResult;
 @Service
 public class ResultServiceImpl implements ResultService {
     private final TestingConfig testingConfig;
+
     private final IOService ioService;
 
     @Override

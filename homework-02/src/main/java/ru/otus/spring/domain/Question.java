@@ -1,10 +1,10 @@
 package ru.otus.spring.domain;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@Data
 public class Question {
     private final String text;
 

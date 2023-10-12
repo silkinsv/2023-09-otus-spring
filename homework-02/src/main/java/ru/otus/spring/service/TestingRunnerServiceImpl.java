@@ -9,7 +9,9 @@ import ru.otus.spring.domain.TestResult;
 @Service
 public class TestingRunnerServiceImpl implements TestingRunnerService {
     private final TestingService testingService;
+
     private final StudentService studentService;
+
     private final ResultService resultService;
 
     @Override

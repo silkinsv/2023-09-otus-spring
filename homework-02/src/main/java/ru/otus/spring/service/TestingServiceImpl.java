@@ -27,20 +27,27 @@ public class TestingServiceImpl implements TestingService {
         TestResult testResult = new TestResult(student);
 
         for (Question question : questions) {
-            boolean isAnswerValid = false;
-            List<Integer> studentsAnswer = new ArrayList<>();
-            List<Integer> correctAnswer = new ArrayList<>();
-            ioService.println(question.getText());
-            Integer i = 1;
-            for (Answer answer : question.getAnswers()) {
-                ioService.println(i.toString() + ". " + answer.getText());
-                if (answer.isCorrect()) correctAnswer.add(i);
-                i++;
-            }
-            studentsAnswer = ioService.readListIntForRange(1, question.getAnswers().size(), "Error read answer, please try again");
-            isAnswerValid = new HashSet<>(studentsAnswer).containsAll(correctAnswer) && new HashSet<>(correctAnswer).containsAll(studentsAnswer);
+            boolean isAnswerValid = getAnswerResult(question);
             testResult.applyAnswer(question, isAnswerValid);
         }
         return testResult;
+    }
+
+    private boolean getAnswerResult(Question question) {
+        List<Integer> studentsAnswer = new ArrayList<>();
+        List<Integer> correctAnswer = new ArrayList<>();
+        ioService.println(question.getText());
+        Integer i = 1;
+        for (Answer answer : question.getAnswers()) {
+            ioService.println(i + ". " + answer.getText());
+            if (answer.isCorrect()) {
+                correctAnswer.add(i);
+            }
+            i++;
+        }
+        studentsAnswer = ioService.readListIntForRange(1, question.getAnswers().size()
+                , "Error read answer, please try again");
+        return new HashSet<>(studentsAnswer).containsAll(correctAnswer)
+                && new HashSet<>(correctAnswer).containsAll(studentsAnswer);
     }
 }

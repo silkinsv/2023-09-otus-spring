@@ -1,8 +1,8 @@
 package ru.otus.spring.domain;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 
-@RequiredArgsConstructor
+@Data
 public class Answer {
     private final String text;
 

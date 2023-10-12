@@ -45,17 +45,11 @@ public class ConsoleIOService implements IOService {
         for (int i = 0; i < MAX_ATTEMPTS; i++) {
             try {
                 var stringValue = scanner.nextLine();
-
                 List<String> stringValueList = List.of(stringValue.trim().split(","));
-                List<Integer> resultIntList = new ArrayList<>();
-                for (String value : stringValueList) {
-                    int intValue = Integer.parseInt(value.trim());
-                    if (intValue < min || intValue > max) {
-                        throw new IllegalArgumentException();
-                    }
-                    resultIntList.add(intValue);
+                if (stringValueList.size() == 0) {
+                    throw new IllegalArgumentException();
                 }
-                return resultIntList;
+                return getListIntFromListString(min, max, stringValueList);
             } catch (IllegalArgumentException e) {
                 println(errorMessage);
             }
@@ -63,4 +57,15 @@ public class ConsoleIOService implements IOService {
         throw new IllegalArgumentException("Error during reading int value");
     }
 
+    private List<Integer> getListIntFromListString(int min, int max, List<String> stringList) {
+        List<Integer> resultIntList = new ArrayList<>();
+        for (String value : stringList) {
+            int intValue = Integer.parseInt(value.trim());
+            if (intValue < min || intValue > max) {
+                throw new IllegalArgumentException();
+            }
+            resultIntList.add(intValue);
+        }
+        return resultIntList;
+    }
 }

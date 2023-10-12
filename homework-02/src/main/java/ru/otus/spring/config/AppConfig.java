@@ -6,11 +6,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig implements TestingConfig, TestFileNameProvider {
 
-    @Value("${test.rightAnswersCountToPass}")
-    private int rightAnswersCountToPass;
+    private final int rightAnswersCountToPass;
 
-    @Value("${test.fileName}")
-    private String testFileName;
+    private final String testFileName;
+
+    public AppConfig(@Value("${test.rightAnswersCountToPass}") int rightAnswersCountToPass
+            , @Value("${test.fileName}") String testFileName) {
+        this.rightAnswersCountToPass = rightAnswersCountToPass;
+        this.testFileName = testFileName;
+    }
 
     @Override
     public int getRightAnswersCountToPass() {
@@ -21,5 +25,4 @@ public class AppConfig implements TestingConfig, TestFileNameProvider {
     public String getTestFileName() {
         return testFileName;
     }
-
 }
