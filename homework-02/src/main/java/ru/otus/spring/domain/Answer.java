@@ -1,14 +1,12 @@
 package ru.otus.spring.domain;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class Answer {
     private final String text;
 
     private final boolean isCorrect;
-
-    public Answer(String text, boolean isCorrect) {
-        this.text = text;
-        this.isCorrect = isCorrect;
-    }
 
     public String getText() {
         return text;

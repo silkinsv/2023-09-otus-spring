@@ -1,7 +1,8 @@
 package ru.otus.spring.service;
 
-import org.springframework.stereotype.Service;
+import ru.otus.spring.domain.Student;
+import ru.otus.spring.domain.TestResult;
 
 public interface TestingService {
-    void printAllQuestions();
+    TestResult executeTestFor(Student student);
 }
