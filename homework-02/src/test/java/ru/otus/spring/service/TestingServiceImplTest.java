@@ -1,6 +1,6 @@
 package ru.otus.spring.service;
 
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.otus.spring.dao.QuestionDao;
@@ -13,12 +13,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@DisplayName("Testing service test")
 class TestingServiceImplTest {
     private final QuestionDao questionDao = Mockito.mock(QuestionDao.class);
     private final IOService ioService = Mockito.mock(ConsoleIOService.class);
     private final TestingService service = new TestingServiceImpl(questionDao, ioService);
     final DataProvider dataProvider = new DataProvider();
 
+    @DisplayName("test pass")
     @Test
     void executeTestForPassTest() {
         Student student = dataProvider.getStudent();
@@ -31,6 +33,7 @@ class TestingServiceImplTest {
         verify(ioService, times(2)).readListIntForRange(1,2, "Error read answer, please try again");
     }
 
+    @DisplayName("test fail")
     @Test
     void executeTestForFailTest() {
         Student student = dataProvider.getStudent();
