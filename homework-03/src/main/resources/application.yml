@@ -1,0 +1,9 @@
+spring:
+  messages:
+    basename: "i18n/messages"
+    encoding: "UTF-8"
+
+application:
+  right-answers-count-to-pass: 3
+  locale: ru_RU
+  test-file-name: testing_en.csv
