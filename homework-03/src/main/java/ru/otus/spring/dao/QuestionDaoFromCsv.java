@@ -1,9 +1,8 @@
 package ru.otus.spring.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Repository;
-import ru.otus.spring.config.AppConfig;
+import ru.otus.spring.config.TestFileNameProvider;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
 
@@ -29,14 +28,12 @@ public class QuestionDaoFromCsv implements QuestionDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionDaoFromCsv.class);
 
-    private final AppConfig appConfig;
-
-    private final MessageSource messageSource;
+    private final TestFileNameProvider fileNameProvider;
 
     @Override
     public List<Question> getAll() {
         ClassLoader classLoader = getClass().getClassLoader();
-        String fileName = messageSource.getMessage("test.file.name",  null, appConfig.getLocale());
+        String fileName = fileNameProvider.getTestFileName();
         try (InputStream inputStream = classLoader.getResourceAsStream(fileName);
              InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(inputStream)
                      , StandardCharsets.UTF_8);

@@ -19,8 +19,8 @@ import static org.mockito.Mockito.*;
 class TestingServiceImplTest {
     private final QuestionDao questionDao = Mockito.mock(QuestionDao.class);
     private final IOService ioService = Mockito.mock(ConsoleIOService.class);
-    private final MessageSource messageSource = Mockito.mock(MessageSource.class);
-    private final TestingService service = new TestingServiceImpl(questionDao, ioService, messageSource);
+    private final LocalizedMessagesService localizedMessagesService = Mockito.mock(LocalizedMessagesServiceImpl.class);
+    private final TestingService service = new TestingServiceImpl(questionDao, ioService, localizedMessagesService);
     final DataProvider dataProvider = new DataProvider();
 
     @DisplayName("test pass in english")
@@ -32,7 +32,7 @@ class TestingServiceImplTest {
         when(questionDao.getAll()).thenReturn(questions);
         when(ioService.readListIntForRange(1,2, "Error read answer, please try again"))
                 .thenReturn(List.of(1));
-        assertEquals(dataProvider.getTestResultCorrect(), service.executeTestFor(student, locale));
+        assertEquals(dataProvider.getTestResultCorrect(), service.executeTestFor(student));
         verify(questionDao, times(1)).getAll();
         verify(ioService, times(2)).readListIntForRange(1,2, "Error read answer, please try again");
     }
@@ -45,7 +45,7 @@ class TestingServiceImplTest {
         Locale locale = new Locale("en");
         when(questionDao.getAll()).thenReturn(questions);
         when(ioService.readListIntForRange(1,2, "Error read answer, please try again")).thenReturn(List.of(2));
-        assertEquals(dataProvider.getTestResultWrong(), service.executeTestFor(student, locale));
+        assertEquals(dataProvider.getTestResultWrong(), service.executeTestFor(student));
         verify(questionDao, times(1)).getAll();
         verify(ioService, times(2)).readListIntForRange(1,2, "Error read answer, please try again");
     }

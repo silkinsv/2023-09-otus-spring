@@ -6,4 +6,6 @@ spring:
 application:
   right-answers-count-to-pass: 3
   locale: ru_RU
-  test-file-name: testing_en.csv
+  test-file-name-by-locale:
+    ru-RU: testing_ru_RU.csv
+    en: testing_en.csv

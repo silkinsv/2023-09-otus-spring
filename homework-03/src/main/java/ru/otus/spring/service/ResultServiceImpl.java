@@ -1,12 +1,9 @@
 package ru.otus.spring.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.config.TestingConfig;
 import ru.otus.spring.domain.TestResult;
-
-import java.util.Locale;
 
 @RequiredArgsConstructor
 @Service
@@ -15,28 +12,23 @@ public class ResultServiceImpl implements ResultService {
 
     private final IOService ioService;
 
-    private final MessageSource messageSource;
+    private final LocalizedMessagesService localizedMessagesService;
 
     @Override
-    public void showResult(TestResult testResult, Locale locale) {
+    public void showResult(TestResult testResult) {
         ioService.println("");
-        ioService.println(messageSource.getMessage("message.result"
-                , null
-                , locale));
-        ioService.println(messageSource.getMessage("message.student"
-                , new String[]{testResult.getStudent().getFullName()}
-                , locale));
-        ioService.println(messageSource.getMessage("message.count_questions"
-                , new String[]{Integer.toString(testResult.getAnsweredQuestions().size())}
-                , locale));
-        ioService.println(messageSource.getMessage("message.count_right_questions"
-                , new String[]{Integer.toString(testResult.getRightAnswersCount())}
-                , locale));
+        ioService.println(localizedMessagesService.getMessage("message.result", (Object[]) null));
+        ioService.println(localizedMessagesService.getMessage("message.student"
+                , (Object[]) new String[]{testResult.getStudent().getFullName()}));
+        ioService.println(localizedMessagesService.getMessage("message.count_questions"
+                , (Object[]) new String[]{Integer.toString(testResult.getAnsweredQuestions().size())}));
+        ioService.println(localizedMessagesService.getMessage("message.count_right_questions"
+                , (Object[]) new String[]{Integer.toString(testResult.getRightAnswersCount())}));
 
         if (testResult.getRightAnswersCount() >= testingConfig.getRightAnswersCountToPass()) {
-            ioService.println(messageSource.getMessage("message.pass", null, locale));
+            ioService.println(localizedMessagesService.getMessage("message.pass", (Object[]) null));
             return;
         }
-        ioService.println(messageSource.getMessage("message.fail", null, locale));
+        ioService.println(localizedMessagesService.getMessage("message.fail", (Object[]) null));
     }
 }

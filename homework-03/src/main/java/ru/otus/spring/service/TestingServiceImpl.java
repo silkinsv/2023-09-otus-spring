@@ -1,7 +1,6 @@
 package ru.otus.spring.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.dao.QuestionDao;
 import ru.otus.spring.domain.Answer;
@@ -12,7 +11,6 @@ import ru.otus.spring.domain.TestResult;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +19,12 @@ public class TestingServiceImpl implements TestingService {
 
     private final IOService ioService;
 
-    private final MessageSource messageSource;
+    private final LocalizedMessagesService localizedMessagesService;
 
     @Override
-    public TestResult executeTestFor(Student student, Locale locale) {
+    public TestResult executeTestFor(Student student) {
         ioService.println("");
-        ioService.printFormattedLine(messageSource.getMessage("message.welcome", null, locale));
+        ioService.printFormattedLine(localizedMessagesService.getMessage("message.welcome", (Object[]) null));
         List<Question> questions = questionDao.getAll();
         TestResult testResult = new TestResult(student);
 
