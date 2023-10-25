@@ -24,7 +24,7 @@ public class TestingServiceImpl implements TestingService {
     @Override
     public TestResult executeTestFor(Student student) {
         ioService.println("");
-        ioService.printFormattedLine(localizedMessagesService.getMessage("message.welcome", (Object[]) null));
+        ioService.printFormattedLine(localizedMessagesService.getMessage("message.welcome"));
         List<Question> questions = questionDao.getAll();
         TestResult testResult = new TestResult(student);
 

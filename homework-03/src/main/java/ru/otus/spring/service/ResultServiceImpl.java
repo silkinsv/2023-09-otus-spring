@@ -17,18 +17,18 @@ public class ResultServiceImpl implements ResultService {
     @Override
     public void showResult(TestResult testResult) {
         ioService.println("");
-        ioService.println(localizedMessagesService.getMessage("message.result", (Object[]) null));
+        ioService.println(localizedMessagesService.getMessage("message.result"));
         ioService.println(localizedMessagesService.getMessage("message.student"
-                , (Object[]) new String[]{testResult.getStudent().getFullName()}));
+                , new String[]{testResult.getStudent().getFullName()}));
         ioService.println(localizedMessagesService.getMessage("message.count_questions"
-                , (Object[]) new String[]{Integer.toString(testResult.getAnsweredQuestions().size())}));
+                , new String[]{Integer.toString(testResult.getAnsweredQuestions().size())}));
         ioService.println(localizedMessagesService.getMessage("message.count_right_questions"
-                , (Object[]) new String[]{Integer.toString(testResult.getRightAnswersCount())}));
+                , new String[]{Integer.toString(testResult.getRightAnswersCount())}));
 
         if (testResult.getRightAnswersCount() >= testingConfig.getRightAnswersCountToPass()) {
-            ioService.println(localizedMessagesService.getMessage("message.pass", (Object[]) null));
+            ioService.println(localizedMessagesService.getMessage("message.pass"));
             return;
         }
-        ioService.println(localizedMessagesService.getMessage("message.fail", (Object[]) null));
+        ioService.println(localizedMessagesService.getMessage("message.fail"));
     }
 }

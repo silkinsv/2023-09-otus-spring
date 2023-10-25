@@ -15,10 +15,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student registerStudent() {
-        String firstName = ioService.readStringWithPrompt(localizedMessagesService.getMessage("message.first_name"
-                , (Object[]) null));
-        String lastName = ioService.readStringWithPrompt(localizedMessagesService.getMessage("message.last_name"
-                , (Object[]) null));
+        String firstName = ioService.readStringWithPrompt(localizedMessagesService.getMessage("message.first_name"));
+        String lastName = ioService.readStringWithPrompt(localizedMessagesService.getMessage("message.last_name"));
         return new Student(firstName, lastName);
     }
 
