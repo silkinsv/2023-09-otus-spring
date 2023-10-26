@@ -56,6 +56,11 @@
             <artifactId>spring-shell-starter</artifactId>
             <version>${spring.shell.version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

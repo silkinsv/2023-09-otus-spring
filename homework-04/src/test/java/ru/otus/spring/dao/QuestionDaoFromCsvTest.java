@@ -3,8 +3,6 @@ package ru.otus.spring.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.context.MessageSource;
-import ru.otus.spring.config.AppConfig;
 import ru.otus.spring.config.TestFileNameProvider;
 import ru.otus.spring.domain.Question;
 import ru.otus.spring.util.DataProvider;
