@@ -1,7 +1,6 @@
 package ru.otus.spring.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.domain.Student;
 import ru.otus.spring.domain.TestResult;

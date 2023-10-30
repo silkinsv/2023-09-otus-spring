@@ -6,18 +6,13 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 import ru.otus.spring.domain.Student;
-import ru.otus.spring.domain.TestResult;
-import ru.otus.spring.service.ResultService;
 import ru.otus.spring.service.StudentService;
 import ru.otus.spring.service.TestingRunnerService;
-import ru.otus.spring.service.TestingService;
 
 @ShellComponent
 @RequiredArgsConstructor
 public class ApplicationCommands {
     private final StudentService studentService;
-
-    private final TestingService testingService;
 
     private final TestingRunnerService testingRunnerService;
 
