@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @DisplayName("Testing service test")
-@SpringBootTest(classes = TestingServiceImpl.class)
+@SpringBootTest
 class TestingServiceImplTest {
     @MockBean
     QuestionDao questionDao;
@@ -34,7 +34,6 @@ class TestingServiceImplTest {
     void executeTestForPassTest() {
         Student student = dataProvider.getStudent();
         List<Question> questions = dataProvider.getQuestionsEn();
-        Locale locale = new Locale.Builder().setLanguage("en").build();
         when(questionDao.getAll()).thenReturn(questions);
         when(ioService.readListIntForRange(1,2, "Error read answer, please try again"))
                 .thenReturn(List.of(1));
@@ -48,7 +47,6 @@ class TestingServiceImplTest {
     void executeTestForFailTest() {
         Student student = dataProvider.getStudent();
         List<Question> questions = dataProvider.getQuestionsEn();
-        Locale locale = new Locale.Builder().setLanguage("en").build();;
         when(questionDao.getAll()).thenReturn(questions);
         when(ioService.readListIntForRange(1,2, "Error read answer, please try again")).thenReturn(List.of(2));
         assertEquals(dataProvider.getTestResultWrong(), service.executeTestFor(student));

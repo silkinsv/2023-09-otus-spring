@@ -19,11 +19,11 @@ public class ResultServiceImpl implements ResultService {
         ioService.println("");
         ioService.println(localizedMessagesService.getMessage("message.result"));
         ioService.println(localizedMessagesService.getMessage("message.student"
-                , new String[]{testResult.getStudent().getFullName()}));
+                , testResult.getStudent().getFullName()));
         ioService.println(localizedMessagesService.getMessage("message.count_questions"
-                , new String[]{Integer.toString(testResult.getAnsweredQuestions().size())}));
+                , Integer.toString(testResult.getAnsweredQuestions().size())));
         ioService.println(localizedMessagesService.getMessage("message.count_right_questions"
-                , new String[]{Integer.toString(testResult.getRightAnswersCount())}));
+                , Integer.toString(testResult.getRightAnswersCount())));
 
         if (testResult.getRightAnswersCount() >= testingConfig.getRightAnswersCountToPass()) {
             ioService.println(localizedMessagesService.getMessage("message.pass"));
