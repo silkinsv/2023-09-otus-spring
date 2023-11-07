@@ -1,4 +1,4 @@
-package ru.otus.hw.repositories;
+package ru.otus.repositories;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,9 +8,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Genre;
+import ru.otus.models.Author;
+import ru.otus.models.Book;
+import ru.otus.models.Genre;
 
 import java.util.List;
 import java.util.stream.IntStream;
