@@ -1,4 +1,4 @@
-package ru.otus.repositories;
+package ru.otus.hw.repositories;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,9 +8,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import ru.otus.models.Author;
-import ru.otus.models.Book;
-import ru.otus.models.Genre;
+import ru.otus.hw.models.Author;
+import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Genre;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -61,7 +61,8 @@ class BookRepositoryJdbcTest {
     @DisplayName("должен сохранять новую книгу")
     @Test
     void shouldSaveNewBook() {
-        var expectedBook = new Book(0, "BookTitle_10500", dbAuthors.get(0), dbGenres.get(0));
+        var expectedBook = new Book(0, "BookTitle_10500", dbAuthors.get(0),
+                List.of(dbGenres.get(0), dbGenres.get(2)));
         var returnedBook = repositoryJdbc.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
@@ -76,7 +77,8 @@ class BookRepositoryJdbcTest {
     @DisplayName("должен сохранять измененную книгу")
     @Test
     void shouldSaveUpdatedBook() {
-        var expectedBook = new Book(1L, "BookTitle_10500", dbAuthors.get(2), dbGenres.get(2));
+        var expectedBook = new Book(1L, "BookTitle_10500", dbAuthors.get(2),
+                List.of(dbGenres.get(4), dbGenres.get(5)));
 
         assertThat(repositoryJdbc.findById(expectedBook.getId()))
                 .isPresent()
@@ -109,14 +111,18 @@ class BookRepositoryJdbcTest {
     }
 
     private static List<Genre> getDbGenres() {
-        return IntStream.range(1, 4).boxed()
+        return IntStream.range(1, 7).boxed()
                 .map(id -> new Genre(id, "Genre_" + id))
                 .toList();
     }
 
     private static List<Book> getDbBooks(List<Author> dbAuthors, List<Genre> dbGenres) {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new Book(id, "BookTitle_" + id, dbAuthors.get(id - 1), dbGenres.get(id - 1)))
+                .map(id -> new Book(id,
+                        "BookTitle_" + id,
+                        dbAuthors.get(id - 1),
+                        dbGenres.subList((id - 1) * 2, (id - 1) * 2 + 2)
+                ))
                 .toList();
     }
 
