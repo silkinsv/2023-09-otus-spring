@@ -8,18 +8,20 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Jdbc для работы с книгами ")
 @JdbcTest
-@Import({BookRepositoryJdbc.class, GenreRepositoryJdbc.class})
+@Import({BookRepositoryJdbc.class})
 class BookRepositoryJdbcTest {
 
     @Autowired
@@ -33,7 +35,8 @@ class BookRepositoryJdbcTest {
 
     @BeforeEach
     void setUp() {
-        dbAuthors = getDbAuthors();
+        dbAuthors = repositoryJdbc.findAll().stream().map(Book::getAuthor).collect(Collectors.toList());
+        //dbAuthors = getDbAuthors();
         dbGenres = getDbGenres();
         dbBooks = getDbBooks(dbAuthors, dbGenres);
     }
@@ -61,7 +64,7 @@ class BookRepositoryJdbcTest {
     @DisplayName("должен сохранять новую книгу")
     @Test
     void shouldSaveNewBook() {
-        var expectedBook = new Book(0, "BookTitle_10500", dbAuthors.get(0),
+        var expectedBook = new Book(null, "BookTitle_10500", dbAuthors.get(0),
                 List.of(dbGenres.get(0), dbGenres.get(2)));
         var returnedBook = repositoryJdbc.save(expectedBook);
         assertThat(returnedBook).isNotNull()
@@ -118,7 +121,7 @@ class BookRepositoryJdbcTest {
 
     private static List<Book> getDbBooks(List<Author> dbAuthors, List<Genre> dbGenres) {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new Book(id,
+                .map(id -> new Book(id.longValue(),
                         "BookTitle_" + id,
                         dbAuthors.get(id - 1),
                         dbGenres.subList((id - 1) * 2, (id - 1) * 2 + 2)

@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 public class BookRepositoryJdbc implements BookRepository {
-    private final GenreRepository genreRepository;
-
     private final NamedParameterJdbcOperations jdbcOperations;
 
     private final BookResultSetExtractor extractor = new BookResultSetExtractor();
@@ -36,6 +34,8 @@ public class BookRepositoryJdbc implements BookRepository {
     private final BookGenreRowMapper bookGenreRowMapper = new BookGenreRowMapper();
 
     private final BookRowMapper bookRowMapper = new BookRowMapper();
+
+    private final GenreRowMapper genreRowMapper = new GenreRowMapper();
 
     @Override
     public Optional<Book> findById(long id) {
@@ -55,7 +55,7 @@ public class BookRepositoryJdbc implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        var genres = genreRepository.findAll();
+        var genres = getAllGenre();
         var relations = getAllGenreRelations();
         var books = getAllBooksWithoutGenres();
         mergeBooksInfo(books, genres, relations);
@@ -64,7 +64,7 @@ public class BookRepositoryJdbc implements BookRepository {
 
     @Override
     public Book save(Book book) {
-        if (book.getId() == 0) {
+        if (book.getId() == null) {
             return insert(book);
         }
         return update(book);
@@ -73,6 +73,10 @@ public class BookRepositoryJdbc implements BookRepository {
     @Override
     public void deleteById(long id) {
         jdbcOperations.update("DELETE FROM books WHERE id = :id", Map.of("id", id));
+    }
+
+    private List<Genre> getAllGenre() {
+        return jdbcOperations.query("SELECT id, name FROM genres", Collections.emptyMap(), genreRowMapper);
     }
 
     private List<Book> getAllBooksWithoutGenres() {
@@ -168,6 +172,16 @@ public class BookRepositoryJdbc implements BookRepository {
             long bookId = rs.getLong("book_id");
             long genreId = rs.getLong("genre_id");
             return new BookGenreRelation(bookId, genreId);
+        }
+    }
+
+    private static class GenreRowMapper implements RowMapper<Genre> {
+
+        @Override
+        public Genre mapRow(ResultSet rs, int i) throws SQLException {
+            long id = rs.getLong("id");
+            String name = rs.getString("name");
+            return new Genre(id, name);
         }
     }
 
