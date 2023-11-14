@@ -36,7 +36,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book insert(String title, long authorId, List<Long> genresIds) {
-        var book = new Book(0L, title, getAuthorById(authorId), getGenresByIds(genresIds));
+        var book = new Book(null, title, getAuthorById(authorId), getGenresByIds(genresIds));
         return save(book);
     }
 
