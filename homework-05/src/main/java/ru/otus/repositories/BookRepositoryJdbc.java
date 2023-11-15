@@ -41,7 +41,7 @@ public class BookRepositoryJdbc implements BookRepository {
     public Optional<Book> findById(long id) {
         List<Book> found = jdbcOperations.query("SELECT b.id, b.title, b.author_id, a.full_name, bg.genre_id, g.name " +
                 "FROM books b " +
-                "LEFT JOIN authors a ON a.id = b.author_id " +
+                "JOIN authors a ON a.id = b.author_id " +
                 "LEFT JOIN books_genres bg ON bg.book_id = b.id " +
                 "LEFT JOIN genres g ON g.id = bg.genre_id " +
                 "WHERE b.id = :id"
@@ -82,7 +82,7 @@ public class BookRepositoryJdbc implements BookRepository {
     private List<Book> getAllBooksWithoutGenres() {
         return jdbcOperations.query("SELECT b.id, b.title, b.author_id, a.full_name " +
                 "FROM books b " +
-                "LEFT JOIN authors a on a.id = b.author_id", Collections.emptyMap(), bookRowMapper);
+                "JOIN authors a on a.id = b.author_id", Collections.emptyMap(), bookRowMapper);
     }
 
     private List<BookGenreRelation> getAllGenreRelations() {
@@ -142,6 +142,9 @@ public class BookRepositoryJdbc implements BookRepository {
 
     private void batchInsertGenresRelationsFor(Book book) {
         // batchUpdate
+        if (book.getGenres() == null) {
+            return;
+        }
         List<BookGenreRelation> bg = new ArrayList<>();
         book.getGenres().forEach(g -> bg.add(new BookGenreRelation(book.getId(), g.getId())));
         jdbcOperations.batchUpdate("INSERT INTO books_genres (book_id, genre_id) VALUES(:bookId, :genreId)"

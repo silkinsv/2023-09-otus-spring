@@ -61,8 +61,12 @@ public class BookServiceImpl implements BookService {
     }
 
     private List<Genre> getGenresByIds(List<Long> genresIds) {
+        if (genresIds == null) {
+            return null;
+        }
         var genres = genreRepository.findAllByIds(genresIds);
-        if (isEmpty(genres)) {
+        genres.forEach(g -> genresIds.remove(g.getId()));
+        if (!isEmpty(genresIds)) {
             throw new NotFoundException("Genres with ids %s not found".formatted(genresIds));
         }
         return genres;
