@@ -25,4 +25,10 @@ public class BookConverter {
                 authorConverter.authorToString(book.getAuthor()),
                 genresString);
     }
+
+    public String bookToSimpleString(Book book) {
+        return "Id: %d, title: %s".formatted(
+                book.getId(),
+                book.getTitle());
+    }
 }

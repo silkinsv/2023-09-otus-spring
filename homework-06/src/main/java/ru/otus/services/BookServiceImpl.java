@@ -54,6 +54,8 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book update(long id, String title, long authorId, List<Long> genresIds) {
+        bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(id)));
         var book = new Book(id, title, getAuthorById(authorId), getGenresByIds(genresIds));
         return save(book);
     }
