@@ -30,9 +30,6 @@ class BookRepositoryJpaTest {
     @Autowired
     private BookRepositoryJpa repositoryJpa;
 
-    @Autowired
-    private TestEntityManager em;
-
     private List<Author> dbAuthors;
 
     private List<Genre> dbGenres;
@@ -42,9 +39,8 @@ class BookRepositoryJpaTest {
     @BeforeEach
     void setUp() {
         dbAuthors = repositoryJpa.findAll().stream().map(Book::getAuthor).collect(Collectors.toList());
-        //dbAuthors = getDbAuthors();
         dbGenres = getDbGenres();
-        dbBooks = getDbBooks(dbAuthors, dbGenres);
+        dbBooks = repositoryJpa.findAll().stream().toList();
     }
 
 
