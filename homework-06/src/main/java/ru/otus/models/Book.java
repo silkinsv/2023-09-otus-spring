@@ -46,7 +46,6 @@ public class Book {
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
-    @Fetch(FetchMode.JOIN)
     @ManyToOne(targetEntity = Author.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "author_id")
     private Author author;

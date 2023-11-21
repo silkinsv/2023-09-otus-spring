@@ -29,10 +29,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Optional<Book> findById(long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
-        var book = optionalBook.orElse(null);
-        if (book != null) {
-            book.toString();
-        }
+        optionalBook.ifPresent(Book::toString);
         return optionalBook;
     }
 
