@@ -23,7 +23,7 @@ public class CommentCommands {
     }
 
     @ShellMethod(value = "Find comment by id", key = "cbid")
-    public String findAuthorById(long id) {
+    public String findCommentById(long id) {
         return commentService.findById(id)
                 .map(commentConverter::commentToString)
                 .orElse("Book with id %d not found".formatted(id));
