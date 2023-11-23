@@ -13,6 +13,7 @@ import ru.otus.repositories.GenreRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -29,7 +30,6 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Optional<Book> findById(long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
-        optionalBook.ifPresent(Book::toString);
         return optionalBook;
     }
 
@@ -37,7 +37,6 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public List<Book> findAll() {
         List<Book> books = bookRepository.findAll();
-        books.forEach(b -> b.getGenres().size());
         return books;
     }
 
@@ -72,13 +71,12 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));
     }
 
-    private List<Genre> getGenresByIds(List<Long> genresIds) {
-        if (genresIds == null) {
-            return null;
+    private Set<Genre> getGenresByIds(List<Long> genresIds) {
+        if (genresIds == null || isEmpty(genresIds)) {
+            throw new NotFoundException("Genre list is empty");
         }
         var genres = genreRepository.findAllByIds(genresIds);
-        genres.forEach(g -> genresIds.remove(g.getId()));
-        if (!isEmpty(genresIds)) {
+        if (genresIds.size() != genres.size()) {
             throw new NotFoundException("Genres with ids %s not found".formatted(genresIds));
         }
         return genres;

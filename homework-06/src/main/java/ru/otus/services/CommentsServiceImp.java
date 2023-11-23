@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.exceptions.NotFoundException;
-import ru.otus.exceptions.NotPermissionException;
 import ru.otus.models.Book;
 import ru.otus.models.Comment;
 import ru.otus.repositories.BookRepository;
@@ -38,7 +37,7 @@ public class CommentsServiceImp implements CommentService {
     @Transactional
     public Comment insert(long bookId, String text) {
         var comment = new Comment(null, text, System.getProperty("user.name"), Instant.now(), getBookById(bookId));
-        return save(comment);
+        return commentRepository.save(comment);
     }
 
     @Override
@@ -46,23 +45,14 @@ public class CommentsServiceImp implements CommentService {
     public Comment update(long id, String text) {
         Comment currentComment = commentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Comment with id %d not found".formatted(id)));
-
-        if (!currentComment.getLogin().equals(System.getProperty("user.name"))) {
-            throw new NotPermissionException("You don`t have permission to update Comment with id %d".formatted(id));
-        }
-
-        var comment = new Comment(id, text, System.getProperty("user.name"), Instant.now(), currentComment.getBook());
-        return save(comment);
+        currentComment.setText(text);
+        return commentRepository.save(currentComment);
     }
 
     @Override
     @Transactional
     public void deleteById(long id) {
         commentRepository.deleteById(id);
-    }
-
-    private Comment save(Comment comment) {
-        return commentRepository.save(comment);
     }
 
     private Book getBookById(long bookId) {

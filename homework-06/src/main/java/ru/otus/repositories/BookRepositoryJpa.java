@@ -21,13 +21,17 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.ofNullable(em.find(Book.class, id));
+        EntityGraph<?> graph = em.getEntityGraph(Book.WITH_AUTHOR_GENRES_GRAPH);
+        TypedQuery<Book> query = em.createQuery("select b from Book b where b.id = :id", Book.class);
+        query.setHint(FETCH.getKey(), graph);
+        query.setParameter("id", id);
+        return Optional.ofNullable(query.getSingleResult());
     }
 
     @Override
     public List<Book> findAll() {
-        EntityGraph<?> graph = em.getEntityGraph(Book.WITH_AUTHOR_GRAPH);
-        TypedQuery<Book> query = em.createQuery("select b from Book b", Book.class);
+        EntityGraph<?> graph = em.getEntityGraph(Book.WITH_GENRES_GRAPH);
+        TypedQuery<Book> query = em.createQuery("select b from Book b inner join fetch b.author", Book.class);
         query.setHint(FETCH.getKey(), graph);
         return query.getResultList();
     }

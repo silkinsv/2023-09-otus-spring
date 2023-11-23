@@ -1,5 +1,6 @@
 package ru.otus.repositories;
 
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +15,16 @@ import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Репозиторий на основе Jpa для работы с комментариями ")
 @DataJpaTest
 @Import(CommentRepositoryJpa.class)
 public class CommentRepositoryJpaTest {
     private static final long FIRST_COMMENT_ID = 1L;
+
     private static final long FIRST_BOOK_ID = 1L;
+
     @Autowired
     private CommentRepositoryJpa repositoryJpa;
 
@@ -53,7 +57,7 @@ public class CommentRepositoryJpaTest {
     void shouldDeleteComment() {
         assertThat(repositoryJpa.findById(FIRST_COMMENT_ID)).isPresent();
         repositoryJpa.deleteById(FIRST_COMMENT_ID);
-        assertThat(repositoryJpa.findById(FIRST_COMMENT_ID)).isEmpty();
+        assertThrows(NoResultException.class, () -> repositoryJpa.findById(FIRST_COMMENT_ID));
     }
 
     @DisplayName("должен сохранять новый комментарий")

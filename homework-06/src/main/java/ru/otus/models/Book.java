@@ -22,12 +22,19 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import java.util.List;
+import java.util.Set;
 
 
 @NamedEntityGraphs(value = {
+        @NamedEntityGraph(name = Book.WITH_AUTHOR_GENRES_GRAPH, attributeNodes = {
+                @NamedAttributeNode("author"),
+                @NamedAttributeNode("genres")
+        }),
         @NamedEntityGraph(name = Book.WITH_AUTHOR_GRAPH, attributeNodes = {
                 @NamedAttributeNode("author")
+        }),
+        @NamedEntityGraph(name = Book.WITH_GENRES_GRAPH, attributeNodes = {
+                @NamedAttributeNode("genres")
         })
 })
 @Data
@@ -38,6 +45,10 @@ import java.util.List;
 @Table(name = "books")
 public class Book {
     public static final String WITH_AUTHOR_GRAPH = "book-with-author-graph";
+
+    public static final String WITH_AUTHOR_GENRES_GRAPH = "book-with-author-genres-graph";
+
+    public static final String WITH_GENRES_GRAPH = "book-with-genre-graph";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +65,5 @@ public class Book {
     @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "books_genres", joinColumns = @JoinColumn(name = "book_id")
             , inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private List<Genre> genres;
+    private Set<Genre> genres;
 }
