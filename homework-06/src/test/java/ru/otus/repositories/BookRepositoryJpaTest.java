@@ -101,6 +101,6 @@ class BookRepositoryJpaTest {
     void shouldDeleteBook() {
         assertThat(repositoryJpa.findById(FIRST_BOOK_ID)).isPresent();
         repositoryJpa.deleteById(FIRST_BOOK_ID);
-        assertThrows(NoResultException.class, () -> repositoryJpa.findById(FIRST_BOOK_ID));
+        assertThat(repositoryJpa.findById(FIRST_BOOK_ID)).isEmpty();
     }
 }

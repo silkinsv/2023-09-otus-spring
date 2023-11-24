@@ -6,6 +6,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
+import jakarta.persistence.NamedEntityGraphs;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
@@ -16,6 +19,11 @@ import lombok.ToString;
 
 import java.time.Instant;
 
+@NamedEntityGraphs(value = {
+        @NamedEntityGraph(name = Comment.WITH_BOOK_GRAPH, attributeNodes = {
+                @NamedAttributeNode("book")
+        })
+})
 @Data
 @ToString(exclude = {"book"})
 @AllArgsConstructor
@@ -23,6 +31,8 @@ import java.time.Instant;
 @Entity
 @Table(name = "comments")
 public class Comment {
+    public static final String WITH_BOOK_GRAPH = "comment-with-book-graph";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -57,7 +57,7 @@ public class CommentRepositoryJpaTest {
     void shouldDeleteComment() {
         assertThat(repositoryJpa.findById(FIRST_COMMENT_ID)).isPresent();
         repositoryJpa.deleteById(FIRST_COMMENT_ID);
-        assertThrows(NoResultException.class, () -> repositoryJpa.findById(FIRST_COMMENT_ID));
+        assertThat(repositoryJpa.findById(FIRST_COMMENT_ID)).isEmpty();
     }
 
     @DisplayName("должен сохранять новый комментарий")
