@@ -29,14 +29,14 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Optional<Book> findById(long id) {
-        Optional<Book> optionalBook = bookRepository.findById(id);
-        return optionalBook;
+        return bookRepository.findById(id);
     }
 
     @Override
     @Transactional
     public List<Book> findAll() {
         List<Book> books = bookRepository.findAll();
+        books.forEach(book -> book.getGenres().size());
         return books;
     }
 

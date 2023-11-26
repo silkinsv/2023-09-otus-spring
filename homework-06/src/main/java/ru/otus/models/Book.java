@@ -32,9 +32,6 @@ import java.util.Set;
         }),
         @NamedEntityGraph(name = Book.WITH_AUTHOR_GRAPH, attributeNodes = {
                 @NamedAttributeNode("author")
-        }),
-        @NamedEntityGraph(name = Book.WITH_GENRES_GRAPH, attributeNodes = {
-                @NamedAttributeNode("genres")
         })
 })
 @Data

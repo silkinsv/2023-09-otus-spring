@@ -31,8 +31,8 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        EntityGraph<?> graph = em.getEntityGraph(Book.WITH_GENRES_GRAPH);
-        TypedQuery<Book> query = em.createQuery("select b from Book b inner join fetch b.author", Book.class);
+        EntityGraph<?> graph = em.getEntityGraph(Book.WITH_AUTHOR_GRAPH);
+        TypedQuery<Book> query = em.createQuery("select b from Book b   ", Book.class);
         query.setHint(FETCH.getKey(), graph);
         return query.getResultList();
     }
