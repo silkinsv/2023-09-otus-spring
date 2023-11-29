@@ -20,7 +20,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Set<Genre> findByIds(List<Long> ids) {
+    public Set<Genre> findByIds(List<String> ids) {
         return new HashSet<>(genreRepository.findAllById(ids));
     }
 }

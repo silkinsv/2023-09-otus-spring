@@ -1,13 +1,11 @@
 package ru.otus.commands;
 
 import lombok.RequiredArgsConstructor;
-import org.h2.tools.Console;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.converters.AuthorConverter;
 import ru.otus.services.AuthorService;
 
-import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -18,11 +16,6 @@ public class AuthorCommands {
 
     private final AuthorConverter authorConverter;
 
-    @ShellMethod(value = "Execute h2 console", key = "ec")
-    public void executeConsole() throws SQLException {
-        Console.main();
-    }
-
     @ShellMethod(value = "Find all authors", key = "aa")
     public String findAllAuthors() {
         return authorService.findAll().stream()
@@ -31,9 +24,9 @@ public class AuthorCommands {
     }
 
     @ShellMethod(value = "Find author by id", key = "abid")
-    public String findAuthorById(long id) {
+    public String findAuthorById(String id) {
         return authorService.findById(id)
                 .map(authorConverter::authorToString)
-                .orElse("Book with id %d not found".formatted(id));
+                .orElse("Author with id %s not found".formatted(id));
     }
 }

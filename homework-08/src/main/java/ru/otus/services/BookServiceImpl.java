@@ -29,7 +29,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Optional<Book> findById(long id) {
+    public Optional<Book> findById(String id) {
         return bookRepository.findById(id);
     }
 
@@ -43,14 +43,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book insert(String title, long authorId, List<Long> genresIds) {
+    public Book insert(String title, String authorId, List<String> genresIds) {
         var book = new Book(null, title, getAuthorById(authorId), getGenresByIds(genresIds));
         return save(book);
     }
 
     @Override
     @Transactional
-    public Book update(long id, String title, long authorId, List<Long> genresIds) {
+    public Book update(String id, String title, String authorId, List<String> genresIds) {
         bookRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(id)));
         var book = new Book(id, title, getAuthorById(authorId), getGenresByIds(genresIds));
@@ -59,7 +59,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         bookRepository.deleteById(id);
     }
 
@@ -67,12 +67,12 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
-    private Author getAuthorById(long authorId) {
+    private Author getAuthorById(String authorId) {
         return authorRepository.findById(authorId)
                 .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));
     }
 
-    private Set<Genre> getGenresByIds(List<Long> genresIds) {
+    private Set<Genre> getGenresByIds(List<String> genresIds) {
         if (genresIds == null || isEmpty(genresIds)) {
             throw new NotFoundException("Genre list is empty");
         }

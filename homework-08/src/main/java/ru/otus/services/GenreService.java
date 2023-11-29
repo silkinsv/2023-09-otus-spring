@@ -8,5 +8,5 @@ import java.util.Set;
 public interface GenreService {
     List<Genre> findAll();
 
-    Set<Genre> findByIds(List<Long> genresIds);
+    Set<Genre> findByIds(List<String> genresIds);
 }

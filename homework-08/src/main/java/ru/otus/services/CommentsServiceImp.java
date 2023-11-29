@@ -10,6 +10,7 @@ import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.CommentRepository;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,27 +23,28 @@ public class CommentsServiceImp implements CommentService {
 
     @Override
     @Transactional
-    public Optional<Comment> findById(long id) {
+    public Optional<Comment> findById(String id) {
         return commentRepository.findById(id);
     }
 
     @Override
     @Transactional
-    public List<Comment> findAllByBookId(long bookId) {
-        Book book = getBookById(bookId);
-        return commentRepository.findByBookId(book.getId());
+    public List<Comment> findAllByBookId(String bookId) {
+//        Book book = getBookById(bookId);
+//        return commentRepository.findByBookId(book.getId());
+        return new ArrayList<>();
     }
 
     @Override
     @Transactional
-    public Comment insert(long bookId, String text) {
+    public Comment insert(String bookId, String text) {
         var comment = new Comment(null, text, System.getProperty("user.name"), Instant.now(), getBookById(bookId));
         return commentRepository.save(comment);
     }
 
     @Override
     @Transactional
-    public Comment update(long id, String text) {
+    public Comment update(String id, String text) {
         Comment currentComment = commentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Comment with id %d not found".formatted(id)));
         currentComment.setText(text);
@@ -51,11 +53,11 @@ public class CommentsServiceImp implements CommentService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         commentRepository.deleteById(id);
     }
 
-    private Book getBookById(long bookId) {
+    private Book getBookById(String bookId) {
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookId)));
     }
