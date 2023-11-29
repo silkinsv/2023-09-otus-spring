@@ -1,6 +1,7 @@
 package ru.otus.models;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
@@ -11,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode(of = {"id", "title"})
 @Document(collection = "books")
 public class Book {
 

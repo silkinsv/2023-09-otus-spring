@@ -45,7 +45,7 @@ public class CommentsServiceImp implements CommentService {
     @Transactional
     public Comment update(String id, String text) {
         Comment currentComment = commentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comment with id %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Comment with id %s not found".formatted(id)));
         currentComment.setText(text);
         return commentRepository.save(currentComment);
     }
