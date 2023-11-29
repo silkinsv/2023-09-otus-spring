@@ -13,9 +13,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
@@ -24,12 +24,12 @@ import java.time.Instant;
                 @NamedAttributeNode("book")
         })
 })
-@Data
-@ToString(exclude = {"book"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "comments")
+@Getter
+@Setter
 public class Comment {
     public static final String WITH_BOOK_GRAPH = "comment-with-book-graph";
 
