@@ -36,15 +36,13 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public List<Book> findAll() {
-        List<Book> books = bookRepository.findAll();
-        books.forEach(book -> book.getGenres().size());
-        return books;
+        return bookRepository.findAll();
     }
 
     @Override
     @Transactional
     public Book insert(String title, String authorId, List<String> genresIds) {
-        var book = new Book(null, title, getAuthorById(authorId), getGenresByIds(genresIds));
+        var book = new Book(title, getAuthorById(authorId), getGenresByIds(genresIds));
         return save(book);
     }
 
@@ -52,7 +50,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Book update(String id, String title, String authorId, List<String> genresIds) {
         bookRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Book with id %s not found".formatted(id)));
         var book = new Book(id, title, getAuthorById(authorId), getGenresByIds(genresIds));
         return save(book);
     }
@@ -69,7 +67,7 @@ public class BookServiceImpl implements BookService {
 
     private Author getAuthorById(String authorId) {
         return authorRepository.findById(authorId)
-                .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));
+                .orElseThrow(() -> new NotFoundException("Author with id %s not found".formatted(authorId)));
     }
 
     private Set<Genre> getGenresByIds(List<String> genresIds) {

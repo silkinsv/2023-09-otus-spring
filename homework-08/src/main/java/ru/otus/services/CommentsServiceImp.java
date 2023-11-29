@@ -30,15 +30,14 @@ public class CommentsServiceImp implements CommentService {
     @Override
     @Transactional
     public List<Comment> findAllByBookId(String bookId) {
-//        Book book = getBookById(bookId);
-//        return commentRepository.findByBookId(book.getId());
-        return new ArrayList<>();
+        Book book = getBookById(bookId);
+        return commentRepository.findByBook_Id(book.getId());
     }
 
     @Override
     @Transactional
     public Comment insert(String bookId, String text) {
-        var comment = new Comment(null, text, System.getProperty("user.name"), Instant.now(), getBookById(bookId));
+        var comment = new Comment(text, getBookById(bookId));
         return commentRepository.save(comment);
     }
 
@@ -59,6 +58,6 @@ public class CommentsServiceImp implements CommentService {
 
     private Book getBookById(String bookId) {
         return bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookId)));
+                .orElseThrow(() -> new NotFoundException("Book with id %s not found".formatted(bookId)));
     }
 }

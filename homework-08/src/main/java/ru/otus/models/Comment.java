@@ -27,4 +27,11 @@ public class Comment {
 
     @DBRef
     private Book book;
+
+    public Comment(String text, Book book) {
+        this.text = text;
+        this.login = System.getProperty("user.name");
+        this.timestamp = Instant.now();
+        this.book = book;
+    }
 }

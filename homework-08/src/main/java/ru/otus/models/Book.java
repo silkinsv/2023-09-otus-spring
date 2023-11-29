@@ -22,4 +22,10 @@ public class Book {
     private Author author;
 
     private Set<Genre> genres;
+
+    public Book(String title, Author author, Set<Genre> genres) {
+        this.title = title;
+        this.author = author;
+        this.genres = genres;
+    }
 }

@@ -28,7 +28,7 @@ public class BookCommands {
     public String findBookById(String id) {
         return bookService.findById(id)
                 .map(bookConverter::bookToString)
-                .orElse("Book with id %d not found".formatted(id));
+                .orElse("Book with id %s not found".formatted(id));
     }
 
     //bins aaaaaaaaaaaaa 1 1,6//bins aaaaaaaaaaaaa 1 1,6

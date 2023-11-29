@@ -2,22 +2,29 @@ package ru.otus.changelog;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import ru.otus.exceptions.NotFoundException;
+import com.mongodb.client.model.Indexes;
+import org.bson.Document;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
+import ru.otus.models.Comment;
 import ru.otus.models.Genre;
 import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
+import ru.otus.repositories.CommentRepository;
 import ru.otus.repositories.GenreRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ChangeLog
 public class DatabaseChangelog {
+    private Map<String, Author> authorMap;
+
+    private Map<String, Genre> genreMap;
+
+    private Book bookWithComment;
     @ChangeSet(order = "001", id = "dropDb", author = "silkinsv", runAlways = true)
     public void dropDb(MongoDatabase db) {
         db.drop();
@@ -26,45 +33,57 @@ public class DatabaseChangelog {
     @ChangeSet(order = "002", id = "insertAuthors", author = "silkinsv")
     public void insertAuthors(AuthorRepository repository) {
         List<Author> authors = new ArrayList<>();
-        authors.add(new Author("1", "Author_1"));
-        authors.add(new Author("2", "Author_2"));
-        authors.add(new Author("3", "Author_3"));
-        repository.saveAll(authors);
+        authors.add(new Author("Author_1"));
+        authors.add(new Author("Author_2"));
+        authors.add(new Author("Author_3"));
+        authors = repository.saveAll(authors);
+        authorMap = authors.stream().collect(Collectors.toMap(Author::getFullName, author -> author));
     }
 
     @ChangeSet(order = "003", id = "insertGenres", author = "silkinsv")
     public void insertGenres(GenreRepository repository) {
         List<Genre> genres = new ArrayList<>();
-        genres.add(new Genre("1", "Genre_1"));
-        genres.add(new Genre("2", "Genre_2"));
-        genres.add(new Genre("3", "Genre_3"));
-        genres.add(new Genre("4", "Genre_4"));
-        genres.add(new Genre("5", "Genre_5"));
-        genres.add(new Genre("6", "Genre_6"));
-        repository.saveAll(genres);
+        genres.add(new Genre("Genre_1"));
+        genres.add(new Genre("Genre_2"));
+        genres.add(new Genre("Genre_3"));
+        genres.add(new Genre("Genre_4"));
+        genres.add(new Genre("Genre_5"));
+        genres.add(new Genre("Genre_6"));
+        genres = repository.saveAll(genres);
+        genreMap = genres.stream().collect(Collectors.toMap(Genre::getName, genre -> genre));
     }
 
     @ChangeSet(order = "004", id = "insertBooks", author = "silkinsv")
-    public void insertBooks(BookRepository bookRepository,
-                            AuthorRepository authorRepository,
-                            GenreRepository genreRepository) {
+    public void insertBooks(BookRepository repository) {
         List<Book> books = new ArrayList<>();
         Set<Genre> genres = new HashSet<>();
-        var author = authorRepository.findById("1").orElseThrow(() -> new NotFoundException("Author with id 1 not found"));
-        genres.add(genreRepository.findById("1").orElseThrow(() -> new NotFoundException("Genre with id 1 not found")));
-        genres.add(genreRepository.findById("2").orElseThrow(() -> new NotFoundException("Genre with id 2 not found")));
-        books.add(new Book("1", "BookTitle_1", author, genres));
+        genres.add(genreMap.get("Genre_1"));
+        genres.add(genreMap.get("Genre_2"));
+        books.add(new Book("BookTitle_1", authorMap.get("Author_1"), new HashSet<>(genres)));
+        genres.clear();
 
-        author = authorRepository.findById("2").orElseThrow(() -> new NotFoundException("Author with id 2 not found"));
-        genres.add(genreRepository.findById("3").orElseThrow(() -> new NotFoundException("Genre with id 3 not found")));
-        genres.add(genreRepository.findById("4").orElseThrow(() -> new NotFoundException("Genre with id 4 not found")));
-        books.add(new Book("2", "BookTitle_2", author, genres));
+        genres.add(genreMap.get("Genre_3"));
+        genres.add(genreMap.get("Genre_4"));
+        books.add(new Book("BookTitle_2", authorMap.get("Author_2"), new HashSet<>(genres)));
+        genres.clear();
 
-        author = authorRepository.findById("3").orElseThrow(() -> new NotFoundException("Author with id 3 not found"));
-        genres.add(genreRepository.findById("5").orElseThrow(() -> new NotFoundException("Genre with id 5 not found")));
-        genres.add(genreRepository.findById("6").orElseThrow(() -> new NotFoundException("Genre with id 6 not found")));
-        books.add(new Book("3", "BookTitle_3", author, genres));
+        genres.add(genreMap.get("Genre_5"));
+        genres.add(genreMap.get("Genre_6"));
+        books.add(new Book("BookTitle_3", authorMap.get("Author_3"), new HashSet<>(genres)));
+        genres.clear();
 
-        bookRepository.saveAll(books);
+        bookWithComment = repository.saveAll(books).get(0);
+    }
+
+    @ChangeSet(order = "005", id = "insertComments", author = "silkinsv")
+    public void insertComments(CommentRepository repository) {
+        Comment comment = new Comment("Cool", bookWithComment);
+        repository.save(comment);
+    }
+
+    @ChangeSet(order = "006", id = "createIndexComment", author = "silkinsv")
+    public void createIndexComment(MongoDatabase db) {
+        MongoCollection<Document> myCollection = db.getCollection("comments");
+        myCollection.createIndex(Indexes.ascending("book"));
     }
 }
