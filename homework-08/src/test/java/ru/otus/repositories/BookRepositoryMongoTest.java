@@ -5,27 +5,29 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import ru.otus.events.CommentsCascadeDeleteByBookEventsListener;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Comment;
 import ru.otus.models.Genre;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе mongodb для работы с книгами ")
+@Import({CommentsCascadeDeleteByBookEventsListener.class})
 @DataMongoTest
 class BookRepositoryMongoTest {
+    private static final String LOAD_BOOK_TITLE = "BookTitle_1";
 
-    private static final String FIRST_BOOK_TITLE = "BookTitle_1";
+    private static final String DELETE_BOOK_TITLE = "BookTitle_2";
+
+    private static final String UPDATE_BOOK_TITLE = "BookTitle_3";
 
     private static final String FIRST_AUTHOR_FULLNAME = "Author_1";
 
@@ -43,7 +45,7 @@ class BookRepositoryMongoTest {
     @Test
     void shouldReturnCorrectBookById() {
         Query query = new Query();
-        query.addCriteria(Criteria.where("title").is(FIRST_BOOK_TITLE));
+        query.addCriteria(Criteria.where("title").is(LOAD_BOOK_TITLE));
         var expectedBook = mongoTemplate.findOne(query, Book.class);
         var actualBook = bookRepository.findById(expectedBook.getId());
         assertThat(actualBook).isPresent()
@@ -94,7 +96,7 @@ class BookRepositoryMongoTest {
     @Test
     void shouldSaveUpdatedBook() {
         Query query = new Query();
-        query.addCriteria(Criteria.where("title").is(FIRST_BOOK_TITLE));
+        query.addCriteria(Criteria.where("title").is(UPDATE_BOOK_TITLE));
         var tempBook = mongoTemplate.findOne(query, Book.class);
 
         var expectedBook = new Book(tempBook.getId(), "BookTitle_10500", tempBook.getAuthor(), tempBook.getGenres());
@@ -119,7 +121,7 @@ class BookRepositoryMongoTest {
     @Test
     void shouldDeleteBook() {
         Query queryBook = new Query();
-        queryBook.addCriteria(Criteria.where("title").is(FIRST_BOOK_TITLE));
+        queryBook.addCriteria(Criteria.where("title").is(DELETE_BOOK_TITLE));
         var bookToDelete = mongoTemplate.findOne(queryBook, Book.class);
 
         Query queryComments = new Query();

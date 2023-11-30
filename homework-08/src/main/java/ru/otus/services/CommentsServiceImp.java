@@ -9,8 +9,6 @@ import ru.otus.models.Comment;
 import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.CommentRepository;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +29,7 @@ public class CommentsServiceImp implements CommentService {
     @Transactional
     public List<Comment> findAllByBookId(String bookId) {
         Book book = getBookById(bookId);
-        return commentRepository.findByBook_Id(book.getId());
+        return commentRepository.findByBookId(book.getId());
     }
 
     @Override

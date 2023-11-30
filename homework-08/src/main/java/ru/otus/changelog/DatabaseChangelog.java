@@ -15,7 +15,11 @@ import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.CommentRepository;
 import ru.otus.repositories.GenreRepository;
 
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @ChangeLog
@@ -25,6 +29,7 @@ public class DatabaseChangelog {
     private Map<String, Genre> genreMap;
 
     private Book bookWithComment;
+
     @ChangeSet(order = "001", id = "dropDb", author = "silkinsv", runAlways = true)
     public void dropDb(MongoDatabase db) {
         db.drop();

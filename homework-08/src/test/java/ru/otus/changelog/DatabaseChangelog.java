@@ -24,7 +24,7 @@ public class DatabaseChangelog {
 
     private Map<String, Genre> genreMap;
 
-    private Book bookWithComment;
+    private Map<String, Book> bookMap;
 
     @ChangeSet(order = "001", id = "dropDb", author = "silkinsv", runAlways = true)
     public void dropDb(MongoDatabase db) {
@@ -73,13 +73,15 @@ public class DatabaseChangelog {
         books.add(new Book("BookTitle_3", authorMap.get("Author_3"), new HashSet<>(genres)));
         genres.clear();
 
-        bookWithComment = repository.saveAll(books).get(0);
+        books = repository.saveAll(books);
+        bookMap = books.stream().collect(Collectors.toMap(Book::getTitle, book -> book));
     }
 
     @ChangeSet(order = "005", id = "insertComments", author = "silkinsv")
     public void insertComments(CommentRepository repository) {
-        Comment comment = new Comment("Cool", bookWithComment);
-        repository.save(comment);
+        List<Comment> comments = List.of(new Comment("Cool", bookMap.get("BookTitle_1"))
+                , new Comment("Normal", bookMap.get("BookTitle_2")));
+        repository.saveAll(comments);
     }
 
     @ChangeSet(order = "006", id = "createIndexComment", author = "silkinsv")

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,6 +15,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id", "text"})
 @Document(collection = "comments")
 public class Comment {
     @Id
