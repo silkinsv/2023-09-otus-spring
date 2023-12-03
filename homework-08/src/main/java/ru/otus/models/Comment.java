@@ -15,7 +15,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id", "text"})
 @Document(collection = "comments")
 public class Comment {
     @Id
