@@ -2,8 +2,10 @@ package ru.otus.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.otus.dto.AuthorDto;
 import ru.otus.models.Author;
 import ru.otus.repositories.AuthorRepository;
+import ru.otus.services.utils.DtoConverter;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +16,11 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
 
     @Override
-    public List<Author> findAll() {
-        return authorRepository.findAll();
+    public List<AuthorDto> findAll() {
+        return authorRepository.findAll()
+                .stream()
+                .map(DtoConverter::convertToAuthorDto)
+                .toList();
     }
 
     @Override
