@@ -14,7 +14,11 @@ import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.GenreRepository;
 import ru.otus.services.utils.DtoConverter;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -28,7 +32,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<BookDto> findById(long id) {
         return bookRepository.findById(id)
                 .stream()
@@ -37,7 +41,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BookDto> findAll() {
         return bookRepository.findAll()
                 .stream()
@@ -48,7 +52,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public Book save(SaveBookDto bookDto) {
-        if(bookDto.getId() == null) {
+        if (bookDto.getId() == null) {
             return insert(bookDto);
         }
         return update(bookDto);
@@ -100,7 +104,7 @@ public class BookServiceImpl implements BookService {
         }
 
         List<String> genreList = new ArrayList<>();
-        for(String genre : genresString.split(",")) {
+        for (String genre : genresString.split(",")) {
             genre = genre.replace('[', ' ').replace(']', ' ').trim();
             genreList.add(genre);
         }

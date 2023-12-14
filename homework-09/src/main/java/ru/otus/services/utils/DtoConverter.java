@@ -7,8 +7,8 @@ import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.TreeSet;
 
 public class DtoConverter {
     public static BookDto convertToBookDto(Book book) {
@@ -16,8 +16,10 @@ public class DtoConverter {
         bookDto.setId(book.getId());
         bookDto.setTitle(book.getTitle());
         bookDto.setAuthor(book.getAuthor().getFullName());
-        Set<String> genres = book.getGenres().stream().map(Genre::getName).collect(Collectors.toSet());
-        bookDto.setGenres(genres.toString());
+        List<String> genres = book.getGenres().stream()
+                .map(Genre::getName)
+                .toList();
+        bookDto.setGenres(new TreeSet<>(genres).toString());
         return bookDto;
     }
 
