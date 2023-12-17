@@ -11,7 +11,6 @@ import ru.otus.repositories.CommentRepository;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -22,8 +21,9 @@ public class CommentsServiceImp implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Comment> findById(long id) {
-        return commentRepository.findById(id);
+    public Comment findById(long id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Comment with id %d not found".formatted(id)));
     }
 
     @Override

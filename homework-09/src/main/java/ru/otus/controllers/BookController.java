@@ -6,11 +6,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.otus.dto.AuthorDto;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.dto.BookDto;
+import ru.otus.dto.CreateBookDto;
+import ru.otus.dto.UpdateBookDto;
+import ru.otus.dto.AuthorDto;
 import ru.otus.dto.GenreDto;
-import ru.otus.dto.SaveBookDto;
-import ru.otus.exceptions.NotFoundException;
 import ru.otus.services.AuthorService;
 import ru.otus.services.BookService;
 import ru.otus.services.GenreService;
@@ -47,16 +48,20 @@ public class BookController {
     }
 
     @PostMapping("/books/edit")
-    public String saveBook(SaveBookDto book) {
+    public String saveBook(CreateBookDto book) {
+        bookService.save(book);
+        return "redirect:/books";
+    }
+
+    @PostMapping("/books/edit?id={id}")
+    public String saveBook(@RequestParam("id") long id, UpdateBookDto book) {
         bookService.save(book);
         return "redirect:/books";
     }
 
     @GetMapping("/books/{id}/edit")
     public String editBookPage(@PathVariable("id") Long id, Model model) {
-        BookDto book = bookService.findById(id)
-                .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(id)));
-
+        BookDto book = bookService.findById(id);
         fillModel(model, book);
         return "book-save";
     }

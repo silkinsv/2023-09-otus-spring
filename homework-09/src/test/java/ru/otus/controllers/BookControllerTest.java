@@ -14,7 +14,6 @@ import ru.otus.services.BookService;
 import ru.otus.services.GenreService;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.hasSize;
@@ -72,7 +71,7 @@ class BookControllerTest {
 
         given(authorService.findAll()).willReturn(authors);
         given(genreService.findAll()).willReturn(genres);
-        given(bookService.findById(1L)).willReturn(Optional.of(bookDto));
+        given(bookService.findById(1L)).willReturn(bookDto);
 
         mvc.perform(get("/books/add"))
                 .andExpect(status().isOk())
@@ -105,7 +104,7 @@ class BookControllerTest {
 
         given(authorService.findAll()).willReturn(authors);
         given(genreService.findAll()).willReturn(genres);
-        given(bookService.findById(1L)).willReturn(Optional.of(bookDto));
+        given(bookService.findById(1L)).willReturn(bookDto);
 
         mvc.perform(get("/books/1/edit"))
                 .andExpect(status().isOk())

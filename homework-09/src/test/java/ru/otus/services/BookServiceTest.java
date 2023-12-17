@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.otus.dto.BookDto;
-import ru.otus.dto.SaveBookDto;
+import ru.otus.dto.CreateBookDto;
+import ru.otus.mappers.BookMapper;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
-import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
-import ru.otus.repositories.GenreRepository;
 
 import java.util.*;
 
@@ -23,13 +22,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class BookServiceTest {
     @MockBean
-    AuthorRepository authorRepository;
-
-    @MockBean
-    GenreRepository genreRepository;
-
-    @MockBean
     BookRepository bookRepository;
+
+    @MockBean
+    BookMapper bookMapper;
 
     @Autowired
     BookService bookService;
@@ -45,8 +41,9 @@ class BookServiceTest {
                 , new Author(1L, "Author_1")
                 , Set.of(new Genre(1L, "Genre_1"), new Genre(2L, "Genre_2")));
         when(bookRepository.findById(1)).thenReturn(Optional.of(expectedBook));
-        Optional<BookDto> actualBookDto = bookService.findById(FIRST_BOOK_ID);
-        assertEquals(Optional.of(expectedBookDto), actualBookDto);
+        when(bookMapper.toDto(expectedBook)).thenReturn(expectedBookDto);
+        BookDto actualBookDto = bookService.findById(FIRST_BOOK_ID);
+        assertEquals(expectedBookDto, actualBookDto);
     }
 
     @DisplayName("Должен возвращать все книги")
@@ -67,6 +64,9 @@ class BookServiceTest {
                         , Set.of(new Genre(5L, "Genre_5"), new Genre(6L, "Genre_6"))));
 
         when(bookRepository.findAll()).thenReturn(expectedBookList);
+        when(bookMapper.toDto(expectedBookList.get(0))).thenReturn(expectedBookDtoList.get(0));
+        when(bookMapper.toDto(expectedBookList.get(1))).thenReturn(expectedBookDtoList.get(1));
+        when(bookMapper.toDto(expectedBookList.get(2))).thenReturn(expectedBookDtoList.get(2));
         List<BookDto> actualBookDtoList = bookService.findAll();
         assertEquals(expectedBookDtoList, actualBookDtoList);
     }
@@ -74,7 +74,7 @@ class BookServiceTest {
     @DisplayName("Должен сохранять книгу")
     @Test
     void saveTest() {
-        SaveBookDto bookDto = new SaveBookDto(null, "BookTitle_4", 2L, "Genre_3, Genre_4");
+        CreateBookDto bookDto = new CreateBookDto("BookTitle_4", 2L, "Genre_3, Genre_4");
         Author author = new Author(2L, "Author_2");
         List<Genre> genres = List.of(new Genre(3L, "Genre_3"), new Genre(4L, "Genre_4"));
         Book book = new Book(null
@@ -85,8 +85,7 @@ class BookServiceTest {
                 , "BookTitle_4"
                 , author
                 , new HashSet<>(genres));
-        when(authorRepository.findById(2L)).thenReturn(Optional.of(author));
-        when(genreRepository.findAllByNameIn(List.of("Genre_3", "Genre_4"))).thenReturn(genres);
+        when(bookMapper.toEntity(bookDto)).thenReturn(book);
         when(bookRepository.save(book)).thenReturn(expectedBook);
         Book actualBook = bookService.save(bookDto);
         assertEquals(expectedBook, actualBook);
