@@ -15,7 +15,6 @@ import ru.otus.repositories.GenreRepository;
 import java.util.Set;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 
@@ -62,13 +61,13 @@ public class BookMapper {
             throw new NotFoundException("Genre list is empty");
         }
 
-        List<String> genreList = new ArrayList<>();
+        Set<String> genreList = new HashSet<>();
         for (String genre : genresString.split(",")) {
             genre = genre.replace('[', ' ').replace(']', ' ').trim();
             genreList.add(genre);
         }
 
-        var genres = genreRepository.findAllByNameIn(genreList);
+        var genres = genreRepository.findAllByNameIn(genreList.stream().toList());
         if (genreList.size() != genres.size()) {
             throw new NotFoundException("Genres with names %s not found".formatted(genreList));
         }

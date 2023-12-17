@@ -109,7 +109,7 @@ class BookControllerTest {
         mvc.perform(get("/books/1/edit"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(view().name("book-save"))
+                .andExpect(view().name("book-update"))
                 .andExpect(model().attribute("book", bookDto))
                 .andExpect(model().attribute("genres", hasSize(6)))
                 .andExpect(model().attribute("authors", hasSize(3)));
