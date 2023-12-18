@@ -3,11 +3,9 @@ package ru.otus.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
 import ru.otus.dto.UpdateBookDto;
@@ -48,14 +46,14 @@ public class BookController {
         return "book-save";
     }
 
-    @RequestMapping(value = "/books/edit", method = RequestMethod.POST)
+    @PostMapping("/books/edit")
     public String saveBook(CreateBookDto book) {
         bookService.save(book);
         return "redirect:/books";
     }
 
-    @RequestMapping(value = "/books/edit", method = RequestMethod.POST, params = "id")
-    public String saveBook(@RequestParam("id") long id, UpdateBookDto book) {
+    @PostMapping("/books/{id}/edit")
+    public String saveBook(@PathVariable("id") long id, UpdateBookDto book) {
         bookService.save(book);
         return "redirect:/books";
     }

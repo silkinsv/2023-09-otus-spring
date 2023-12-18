@@ -38,7 +38,7 @@
 </head>
 <body>
 
-<form id="edit-form" action="book-update.html" th:method="post" th:action="@{/books/edit(id=${book.getId()})}" th:object="${book}">
+<form id="edit-form" action="book-update.html" th:method="post" th:action="@{/books/__${book.id}__/edit}" th:object="${book}">
     <h3>Book Info:</h3>
 
     <div class="row">
