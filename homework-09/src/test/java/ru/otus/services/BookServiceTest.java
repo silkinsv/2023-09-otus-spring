@@ -12,6 +12,7 @@ import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
 import ru.otus.repositories.BookRepository;
+import ru.otus.utils.DataProvider;
 
 import java.util.*;
 
@@ -30,16 +31,15 @@ class BookServiceTest {
     @Autowired
     BookService bookService;
 
+    final DataProvider dataProvider = new DataProvider();
+
     final long FIRST_BOOK_ID = 1;
 
     @DisplayName("Должен возвращать книгу по Id")
     @Test
     void findBookByIdTest() {
-        BookDto expectedBookDto = new BookDto(FIRST_BOOK_ID, "BookTitle_1", "Author_1", "[Genre_1, Genre_2]");
-        Book expectedBook = new Book(FIRST_BOOK_ID
-                , "BookTitle_1"
-                , new Author(1L, "Author_1")
-                , Set.of(new Genre(1L, "Genre_1"), new Genre(2L, "Genre_2")));
+        BookDto expectedBookDto = dataProvider.getBookDtoList().get(0);
+        Book expectedBook = dataProvider.getBookList().get(0);
         when(bookRepository.findById(1)).thenReturn(Optional.of(expectedBook));
         when(bookMapper.toDto(expectedBook)).thenReturn(expectedBookDto);
         BookDto actualBookDto = bookService.findById(FIRST_BOOK_ID);
@@ -49,19 +49,8 @@ class BookServiceTest {
     @DisplayName("Должен возвращать все книги")
     @Test
     void findAllBookByIdTest() {
-        List<BookDto> expectedBookDtoList = List.of(new BookDto(1L, "BookTitle_1", "Author_1", "[Genre_1, Genre_2]")
-                , new BookDto(2L, "BookTitle_2", "Author_2", "[Genre_3, Genre_4]")
-                , new BookDto(3L, "BookTitle_3", "Author_3", "[Genre_5, Genre_6]"));
-
-        List<Book> expectedBookList = List.of(new Book(1L, "BookTitle_1"
-                        , new Author(1L, "Author_1")
-                        , Set.of(new Genre(1L, "Genre_1"), new Genre(2L, "Genre_2")))
-                , new Book(2L, "BookTitle_2"
-                        , new Author(2L, "Author_2")
-                        , Set.of(new Genre(3L, "Genre_3"), new Genre(4L, "Genre_4")))
-                , new Book(3L, "BookTitle_3"
-                        , new Author(3L, "Author_3")
-                        , Set.of(new Genre(5L, "Genre_5"), new Genre(6L, "Genre_6"))));
+        List<BookDto> expectedBookDtoList = dataProvider.getBookDtoList();
+        List<Book> expectedBookList = dataProvider.getBookList();
 
         when(bookRepository.findAll()).thenReturn(expectedBookList);
         when(bookMapper.toDto(expectedBookList.get(0))).thenReturn(expectedBookDtoList.get(0));
@@ -74,9 +63,9 @@ class BookServiceTest {
     @DisplayName("Должен сохранять книгу")
     @Test
     void saveTest() {
-        CreateBookDto bookDto = new CreateBookDto("BookTitle_4", 2L, "Genre_3, Genre_4");
+        CreateBookDto bookDto = dataProvider.getCreateBookDto();
         Author author = new Author(2L, "Author_2");
-        List<Genre> genres = List.of(new Genre(3L, "Genre_3"), new Genre(4L, "Genre_4"));
+        Set<Genre> genres = Set.of(new Genre(3L, "Genre_3"), new Genre(4L, "Genre_4"));
         Book book = new Book(null
                 , "BookTitle_4"
                 , author
@@ -85,9 +74,9 @@ class BookServiceTest {
                 , "BookTitle_4"
                 , author
                 , new HashSet<>(genres));
-        when(bookMapper.toEntity(bookDto)).thenReturn(book);
+        when(bookMapper.toEntity(bookDto, author, genres)).thenReturn(book);
         when(bookRepository.save(book)).thenReturn(expectedBook);
-        Book actualBook = bookService.save(bookDto);
+        Book actualBook = bookService.create(bookDto, "3,4");
         assertEquals(expectedBook, actualBook);
     }
 }

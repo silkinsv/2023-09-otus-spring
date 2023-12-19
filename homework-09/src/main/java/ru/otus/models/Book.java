@@ -16,7 +16,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.JoinTable;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import org.hibernate.annotations.Fetch;
@@ -36,7 +35,6 @@ import java.util.Set;
 })
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id", "title"})
 @Entity
 @Table(name = "books")
 @Getter

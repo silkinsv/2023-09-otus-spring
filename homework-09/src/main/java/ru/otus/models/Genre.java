@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "genres")
 @Getter
+@EqualsAndHashCode(of = {"id"})
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

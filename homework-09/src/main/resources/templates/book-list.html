@@ -26,7 +26,7 @@
 </head>
 <body>
 <h3>Books:</h3>
-<a href="book-save.html" th:href="@{/books/add}">Add</a>
+<a href="book-create.html" th:href="@{/books/add}">Add</a>
 <br>
 <table class="books">
     <thead>
@@ -46,7 +46,7 @@
         <td th:text="${book.author}">Book_Author</td>
         <td th:text="${book.genres}">Book_Genres</td>
         <td>
-            <a href="book-save.html" th:href="@{/books/__${book.id}__/edit}">Edit</a>
+            <a href="book-create.html" th:href="@{/books/__${book.id}__/edit}">Edit</a>
         </td>
         <td>
             <form id="deleteForm1" method="delete" th:method="delete" th:id="${'deleteForm' + book.id}" th:action="@{/books/__${book.id}__}"></form>

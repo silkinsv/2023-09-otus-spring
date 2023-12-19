@@ -38,7 +38,7 @@
 </head>
 <body>
 
-<form id="edit-form" action="book-save.html" th:method="post" th:action="@{/books/edit}" th:object="${book}">
+<form id="edit-form" action="book-create.html" th:method="post" th:action="@{/books/edit}" th:object="${book}">
     <h3>Book Info:</h3>
 
     <div class="row">
@@ -58,20 +58,9 @@
     </div>
 
     <div class="row">
-        <label for="book-genres-input">Genres (example: "Genre_1, Genre_2"):</label>
+        <label for="book-genres-input">Genres Ids: (example: "1,2"):</label>
         <input id="book-genres-input" name="genres" type="text" th:value="*{genres}"/>
     </div>
-
-<!--    <div class="row">-->
-<!--        <label for="genre-id-input">Genre:</label>-->
-<!--        <select name="genreId" id="genre-id-input">-->
-<!--            <option th:each="genreChoice : ${genres}"-->
-<!--                    th:value="${genreChoice.getId()}"-->
-<!--                    th:selected="(${genreChoice.name} == ${book.genres})"-->
-<!--                    th:text="${genreChoice.getName()}">-->
-<!--            </option>-->
-<!--        </select>-->
-<!--    </div>-->
 
     <div class="row">
         <button type="submit">Save</button>

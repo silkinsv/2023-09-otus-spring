@@ -44,18 +44,18 @@ public class BookController {
     public String addBookPage(Model model) {
         BookDto book = new BookDto();
         fillModel(model, book);
-        return "book-save";
+        return "book-create";
     }
 
     @PostMapping("/books/edit")
-    public String saveBook(CreateBookDto book) {
-        bookService.save(book);
+    public String createBook(CreateBookDto book, String genres) {
+        bookService.create(book, genres);
         return "redirect:/books";
     }
 
     @PostMapping("/books/{id}/edit")
-    public String saveBook(@PathVariable("id") long id, UpdateBookDto book) {
-        bookService.save(book);
+    public String updateBook(@PathVariable("id") long id, UpdateBookDto book, String genres) {
+        bookService.update(book, genres);
         return "redirect:/books";
     }
 

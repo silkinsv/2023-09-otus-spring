@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +18,5 @@ public class CreateBookDto {
     @NotNull
     private Long authorId;
 
-    private String genres;
+    private Set<Long> genreIds;
 }
