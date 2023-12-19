@@ -17,8 +17,7 @@ import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BookController.class)
@@ -51,7 +50,7 @@ class BookControllerTest {
 
     @Test
     public void deleteBookPageTest() throws Exception {
-        mvc.perform(get("/books/1/delete"))
+        mvc.perform(delete("/books/1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/books"));
     }

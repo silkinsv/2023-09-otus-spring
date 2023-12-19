@@ -49,7 +49,8 @@
             <a href="book-save.html" th:href="@{/books/__${book.id}__/edit}">Edit</a>
         </td>
         <td>
-            <a th:href="@{/books/__${book.id}__/delete}">Delete</a>
+            <form id="deleteForm1" method="delete" th:method="delete" th:id="${'deleteForm' + book.id}" th:action="@{/books/__${book.id}__}"></form>
+            <a data-action="deleteForm1" th:data-action="${'deleteForm' + book.id}" onclick="document.getElementById(this.getAttribute('data-action')).submit();"><button type="button">Delete</button></a>
         </td>
     </tr>
     </tbody>

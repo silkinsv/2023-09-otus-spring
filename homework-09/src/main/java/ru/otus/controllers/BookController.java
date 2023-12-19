@@ -3,6 +3,7 @@ package ru.otus.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,7 @@ public class BookController {
         return "book-list";
     }
 
-    @GetMapping("/books/{id}/delete")
+    @DeleteMapping("/books/{id}")
     public String deleteBookPage(@PathVariable("id") Long id) {
         bookService.deleteById(id);
         return "redirect:/books";

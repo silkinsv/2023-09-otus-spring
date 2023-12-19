@@ -7,6 +7,11 @@ spring:
       data-locations: classpath:data.sql
       schema-locations: classpath:schema.sql
 
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
   jpa:
     generate-ddl: false
     hibernate:
