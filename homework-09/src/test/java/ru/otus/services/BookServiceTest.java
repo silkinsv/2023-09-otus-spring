@@ -65,7 +65,7 @@ class BookServiceTest {
     void saveTest() {
         CreateBookDto bookDto = dataProvider.getCreateBookDto();
         Author author = new Author(2L, "Author_2");
-        Set<Genre> genres = Set.of(new Genre(3L, "Genre_3"), new Genre(4L, "Genre_4"));
+        Set<Genre> genres = Set.of(new Genre(3L, "Genre_3"));
         Book book = new Book(null
                 , "BookTitle_4"
                 , author
@@ -76,7 +76,7 @@ class BookServiceTest {
                 , new HashSet<>(genres));
         when(bookMapper.toEntity(bookDto, author, genres)).thenReturn(book);
         when(bookRepository.save(book)).thenReturn(expectedBook);
-        Book actualBook = bookService.create(bookDto, "3,4");
+        Book actualBook = bookService.create(bookDto);
         assertEquals(expectedBook, actualBook);
     }
 }

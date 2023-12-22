@@ -58,20 +58,15 @@
     </div>
 
     <div class="row">
-        <label for="book-genres-input">Genres (example: "Genre_1, Genre_2"):</label>
-        <input id="book-genres-input" name="genres" type="text" th:value="*{genres}"/>
+        <label for="genre-id-input">Genre:</label>
+        <select name="genreId" id="genre-id-input">
+            <option th:each="genreChoice : ${genres}"
+                    th:value="${genreChoice.getId()}"
+                    th:selected="(${genreChoice.name} == ${book.genre.name})"
+                    th:text="${genreChoice.getName()}">
+            </option>
+        </select>
     </div>
-
-    <!--    <div class="row">-->
-    <!--        <label for="genre-id-input">Genre:</label>-->
-    <!--        <select name="genreId" id="genre-id-input">-->
-    <!--            <option th:each="genreChoice : ${genres}"-->
-    <!--                    th:value="${genreChoice.getId()}"-->
-    <!--                    th:selected="(${genreChoice.name} == ${book.genres})"-->
-    <!--                    th:text="${genreChoice.getName()}">-->
-    <!--            </option>-->
-    <!--        </select>-->
-    <!--    </div>-->
 
     <div class="row">
         <button type="submit">Save</button>

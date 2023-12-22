@@ -40,13 +40,13 @@ public class DataProvider {
         bookDtoList = new ArrayList<>();
         bookDtoList.add(new BookDto(1L, "BookTitle_1",
                 authorDtoList.get(0),
-                Set.of(genreDtoList.get(0), genreDtoList.get(1))));
+                genreDtoList.get(0)));
         bookDtoList.add(new BookDto(2L, "BookTitle_2",
                 authorDtoList.get(1),
-                Set.of(genreDtoList.get(2), genreDtoList.get(3))));
+                genreDtoList.get(2)));
         bookDtoList.add(new BookDto(3L, "BookTitle_3",
                 authorDtoList.get(2),
-                Set.of(genreDtoList.get(4), genreDtoList.get(5))));
+                genreDtoList.get(4)));
 
         bookList = new ArrayList<>();
         bookList.add(new Book(1L,
@@ -62,8 +62,7 @@ public class DataProvider {
                 new Author(3L, "Author_3"),
                 Set.of(new Genre(5L, "Genre_5"), new Genre(6L, "Genre_6"))));
 
-        createBookDto = new CreateBookDto("BookTitle_4", 2L,
-                Set.of(3L, 4L));
+        createBookDto = new CreateBookDto("BookTitle_4", 2L, 3L);
     }
 
     public List<BookDto> getBookDtoList() {

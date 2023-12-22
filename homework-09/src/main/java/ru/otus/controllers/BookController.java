@@ -1,5 +1,6 @@
 package ru.otus.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,15 +48,15 @@ public class BookController {
         return "book-create";
     }
 
-    @PostMapping("/books/edit")
-    public String createBook(CreateBookDto book, String genres) {
-        bookService.create(book, genres);
+    @PostMapping("/books/create")
+    public String createBook(@Valid CreateBookDto book) {
+        bookService.create(book);
         return "redirect:/books";
     }
 
     @PostMapping("/books/{id}/edit")
-    public String updateBook(@PathVariable("id") long id, UpdateBookDto book, String genres) {
-        bookService.update(book, genres);
+    public String updateBook(@PathVariable("id") long id, @Valid UpdateBookDto book) {
+        bookService.update(book);
         return "redirect:/books";
     }
 

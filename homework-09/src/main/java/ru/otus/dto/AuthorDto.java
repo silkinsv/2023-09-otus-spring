@@ -14,7 +14,4 @@ public class AuthorDto {
     @NotNull
     private String fullName;
 
-    public String toString() {
-        return this.getFullName();
-    }
 }

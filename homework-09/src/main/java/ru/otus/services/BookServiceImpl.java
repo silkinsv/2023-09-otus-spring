@@ -15,13 +15,8 @@ import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.GenreRepository;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RequiredArgsConstructor
 @Service
@@ -53,22 +48,19 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book create(CreateBookDto bookDto, String genresString) {
-        bookDto.setGenreIds(Arrays.stream(genresString.trim().split(","))
-                .map(Long::parseLong)
-                .collect(Collectors.toSet()));
+    public Book create(CreateBookDto bookDto) {
         var author = getAuthorById(bookDto.getAuthorId());
-        var genres = getGenresByIds(bookDto.getGenreIds());
+        var genres = getGenresByIds(bookDto.getGenreId());
         return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
     }
 
     @Override
     @Transactional
-    public Book update(UpdateBookDto bookDto, String genresString) {
+    public Book update(UpdateBookDto bookDto) {
         bookRepository.findById(bookDto.getId())
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookDto.getId())));
         var author = getAuthorById(bookDto.getAuthorId());
-        var genres = getGenresByNames(genresString);
+        var genres = getGenresByIds(bookDto.getGenreId());
         return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
     }
 
@@ -83,32 +75,8 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));
     }
 
-    private Set<Genre> getGenresByIds(Set<Long> genresIds) {
-        if (genresIds == null || isEmpty(genresIds)) {
-            throw new NotFoundException("Genre list is empty");
-        }
-        var genres = genreRepository.findAllById(genresIds);
-        if (genresIds.size() != genres.size()) {
-            throw new NotFoundException("Genres with ids %s not found".formatted(genresIds));
-        }
-        return new HashSet<>(genres);
-    }
-
-    private Set<Genre> getGenresByNames(String genresString) {
-        if (genresString == null || genresString.isEmpty()) {
-            throw new NotFoundException("Genre list is empty");
-        }
-
-        Set<String> genreList = new HashSet<>();
-        for (String genre : genresString.split(",")) {
-            genre = genre.replace('[', ' ').replace(']', ' ').trim();
-            genreList.add(genre);
-        }
-
-        var genres = genreRepository.findAllByNameIn(genreList.stream().toList());
-        if (genreList.size() != genres.size()) {
-            throw new NotFoundException("Genres with names %s not found".formatted(genreList));
-        }
-        return new HashSet<>(genres);
+    private Set<Genre> getGenresByIds(long genreId) {
+        return Set.of(genreRepository.findById(genreId)
+                .orElseThrow(() -> new NotFoundException("Genre with id %d not found".formatted(genreId))));
     }
 }

@@ -15,8 +15,4 @@ public class GenreDto {
 
     @NotBlank
     private String name;
-
-    public String toString() {
-        return this.getName();
-    }
 }

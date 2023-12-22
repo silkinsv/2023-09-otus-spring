@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.dto.AuthorDto;
 import ru.otus.dto.BookDto;
+import ru.otus.dto.CreateBookDto;
 import ru.otus.dto.GenreDto;
 import ru.otus.services.AuthorService;
 import ru.otus.services.BookService;
@@ -18,8 +19,11 @@ import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.verify;
 
 @WebMvcTest(BookController.class)
 class BookControllerTest {
@@ -75,9 +79,13 @@ class BookControllerTest {
 
     @Test
     public void saveBookTest() throws Exception {
-        mvc.perform(post("/books/edit"))
+        CreateBookDto book = dataProvider.getCreateBookDto();
+        mvc.perform(post("/books/create").flashAttr("createBookDto", book))
+                .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/books"));
+                .andExpect(redirectedUrl("/books"));
+
+        verify(bookService, times(1)).create(book);
     }
 
     @Test

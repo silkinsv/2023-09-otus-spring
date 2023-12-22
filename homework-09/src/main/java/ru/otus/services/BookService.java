@@ -12,9 +12,9 @@ public interface BookService {
 
     List<BookDto> findAll();
 
-    Book create(CreateBookDto bookDto, String genres);
+    Book create(CreateBookDto bookDto);
 
-    Book update(UpdateBookDto bookDto, String genres);
+    Book update(UpdateBookDto bookDto);
 
     void deleteById(long id);
 }

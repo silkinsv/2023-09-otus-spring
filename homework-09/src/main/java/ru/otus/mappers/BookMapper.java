@@ -43,7 +43,7 @@ public class BookMapper {
         Set<GenreDto> genres = book.getGenres().stream()
                 .map(genreMapper::toDto)
                 .collect(Collectors.toSet());
-        bookDto.setGenres(genres);
+        bookDto.setGenre(genres.stream().findAny().get());
         return bookDto;
     }
 }
