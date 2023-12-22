@@ -15,6 +15,7 @@ import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.GenreRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public Book create(CreateBookDto bookDto) {
         var author = getAuthorById(bookDto.getAuthorId());
-        var genres = getGenresByIds(bookDto.getGenreId());
+        var genres = getGenresByIds(bookDto.getGenreIds());
         return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
     }
 
@@ -60,7 +61,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.findById(bookDto.getId())
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookDto.getId())));
         var author = getAuthorById(bookDto.getAuthorId());
-        var genres = getGenresByIds(bookDto.getGenreId());
+        var genres = getGenresByIds(bookDto.getGenreIds());
         return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
     }
 
@@ -75,8 +76,14 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));
     }
 
-    private Set<Genre> getGenresByIds(long genreId) {
-        return Set.of(genreRepository.findById(genreId)
-                .orElseThrow(() -> new NotFoundException("Genre with id %d not found".formatted(genreId))));
+    private Set<Genre> getGenresByIds(Set<Long> genresIds) {
+        if (genresIds == null || genresIds.isEmpty()) {
+            throw new NotFoundException("Genre list is empty");
+        }
+        var genres = genreRepository.findAllById(genresIds);
+        if (genresIds.size() != genres.size()) {
+            throw new NotFoundException("Genres with ids %s not found".formatted(genresIds));
+        }
+        return new HashSet<>(genres);
     }
 }

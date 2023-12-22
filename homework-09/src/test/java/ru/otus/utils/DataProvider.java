@@ -62,7 +62,7 @@ public class DataProvider {
                 new Author(3L, "Author_3"),
                 Set.of(new Genre(5L, "Genre_5"), new Genre(6L, "Genre_6"))));
 
-        createBookDto = new CreateBookDto("BookTitle_4", 2L, 3L);
+        createBookDto = new CreateBookDto("BookTitle_4", 2L, Set.of(3L));
     }
 
     public List<BookDto> getBookDtoList() {

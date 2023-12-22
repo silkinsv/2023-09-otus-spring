@@ -59,7 +59,7 @@
 
     <div class="row">
         <label for="genre-id-input">Genre:</label>
-        <select name="genreId" id="genre-id-input">
+        <select name="genreIds" id="genre-id-input">
             <option th:each="genreChoice : ${genres}"
                     th:value="${genreChoice.getId()}"
                     th:selected="(${genreChoice.name} == ${book.genre})"
