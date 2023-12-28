@@ -28,7 +28,7 @@
 <h3>Books:</h3>
 <a href="book-create.html" th:href="@{/books/add}">Add</a>
 <br>
-<table class="books">
+<table class="books" id="books">
     <thead>
     <tr>
         <th>ID</th>
@@ -40,20 +40,48 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="book : ${books}">
-        <td th:text="${book.id}">1</td>
-        <td th:text="${book.title}">Book_Title</td>
-        <td th:text="${book.author}">Book_Author</td>
-        <td th:text="${book.genre}">Book_Genre</td>
-        <td>
-            <a href="book-create.html" th:href="@{/books/__${book.id}__/edit}">Edit</a>
-        </td>
-        <td>
-            <form id="deleteForm1" method="delete" th:method="delete" th:id="${'deleteForm' + book.id}" th:action="@{/books/__${book.id}__}"></form>
-            <a data-action="deleteForm1" th:data-action="${'deleteForm' + book.id}" onclick="document.getElementById(this.getAttribute('data-action')).submit();"><button type="button">Delete</button></a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    const table = document.getElementById('books');
+
+    fetch('/api/v1/books')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = table.querySelector('tbody');
+            data.forEach(book => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author.fullName}</td>
+                    <td>${book.genre.name}</td>
+                    <td><button><a href="/books/${book.id}/edit">Edit</a></button></td>
+                    <td><button id="deleteButton" onclick="deleteBook(${book.id})">Delete Book</button></td>
+                   `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error(error));
+</script>
+
+<script>
+    function deleteBook(id) {
+        fetch('/api/v1/books/' + id, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Book deleted');
+                    location.reload(); // перезагрузка страницы
+                } else {
+                    console.error('Error deleting book');
+                }
+            })
+            .catch(error => console.error(error));
+    }
+</script>
+
 </body>
 </html>

@@ -1,9 +1,6 @@
 package ru.otus.utils;
 
-import ru.otus.dto.AuthorDto;
-import ru.otus.dto.BookDto;
-import ru.otus.dto.CreateBookDto;
-import ru.otus.dto.GenreDto;
+import ru.otus.dto.*;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
@@ -22,6 +19,8 @@ public class DataProvider {
     private final List<Book> bookList;
 
     private final CreateBookDto createBookDto;
+
+    private final UpdateBookDto updateBookDto;
 
     public DataProvider() {
         authorDtoList = new ArrayList<>();
@@ -63,6 +62,8 @@ public class DataProvider {
                 Set.of(new Genre(5L, "Genre_5"), new Genre(6L, "Genre_6"))));
 
         createBookDto = new CreateBookDto("BookTitle_4", 2L, Set.of(3L));
+
+        updateBookDto = new UpdateBookDto(1L, "BookTitle_11", 1L, Set.of(1L));
     }
 
     public List<BookDto> getBookDtoList() {
@@ -83,5 +84,9 @@ public class DataProvider {
 
     public CreateBookDto getCreateBookDto() {
         return createBookDto;
+    }
+
+    public UpdateBookDto getUpdateBookDto() {
+        return updateBookDto;
     }
 }

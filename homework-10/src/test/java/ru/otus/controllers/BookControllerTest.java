@@ -33,77 +33,11 @@ class BookControllerTest {
     @MockBean
     private BookService bookService;
 
-    @MockBean
-    private AuthorService authorService;
-
-    @MockBean
-    private GenreService genreService;
-
-    final DataProvider dataProvider = new DataProvider();
-
     @Test
     public void getBookListPageTest() throws Exception {
-        given(bookService.findAll()).willReturn(dataProvider.getBookDtoList());
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(view().name("book-list"))
-                .andExpect(model().attribute("books", hasSize(3)));
-    }
-
-    @Test
-    public void deleteBookPageTest() throws Exception {
-        mvc.perform(delete("/books/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/books"));
-    }
-
-    @Test
-    public void addBookPageTest() throws Exception {
-        List<AuthorDto> authors = dataProvider.getAuthorDtoList();
-        List<GenreDto> genres = dataProvider.getGenreDtoList();
-        BookDto bookDto = new BookDto();
-
-        given(authorService.findAll()).willReturn(authors);
-        given(genreService.findAll()).willReturn(genres);
-        given(bookService.findById(1L)).willReturn(bookDto);
-
-        mvc.perform(get("/books/add"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(view().name("book-create"))
-                .andExpect(model().attribute("book", bookDto))
-                .andExpect(model().attribute("genres", hasSize(6)))
-                .andExpect(model().attribute("authors", hasSize(3)));
-    }
-
-    @Test
-    public void saveBookTest() throws Exception {
-        CreateBookDto book = dataProvider.getCreateBookDto();
-        mvc.perform(post("/books/create").flashAttr("createBookDto", book))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books"));
-
-        verify(bookService, times(1)).create(book);
-    }
-
-    @Test
-    public void editBookPageTest() throws Exception {
-        List<AuthorDto> authors = dataProvider.getAuthorDtoList();
-        List<GenreDto> genres = dataProvider.getGenreDtoList();
-        BookDto bookDto = dataProvider.getBookDtoList().get((0));
-
-        given(authorService.findAll()).willReturn(authors);
-        given(genreService.findAll()).willReturn(genres);
-        given(bookService.findById(1L)).willReturn(bookDto);
-
-        mvc.perform(get("/books/1/edit"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(view().name("book-update"))
-                .andExpect(model().attribute("book", bookDto))
-                .andExpect(model().attribute("genres", hasSize(6)))
-                .andExpect(model().attribute("authors", hasSize(3)));
+                .andExpect(view().name("book-list"));
     }
 }

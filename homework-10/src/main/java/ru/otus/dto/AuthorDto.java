@@ -13,5 +13,4 @@ public class AuthorDto {
 
     @NotNull
     private String fullName;
-
 }
