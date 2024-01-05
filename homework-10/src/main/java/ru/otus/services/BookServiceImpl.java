@@ -9,7 +9,6 @@ import ru.otus.dto.UpdateBookDto;
 import ru.otus.exceptions.NotFoundException;
 import ru.otus.mappers.BookMapper;
 import ru.otus.models.Author;
-import ru.otus.models.Book;
 import ru.otus.models.Genre;
 import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
@@ -49,20 +48,20 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book create(CreateBookDto bookDto) {
+    public BookDto create(CreateBookDto bookDto) {
         var author = getAuthorById(bookDto.getAuthorId());
         var genres = getGenresByIds(bookDto.getGenreIds());
-        return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
+        return bookMapper.toDto(bookRepository.save(bookMapper.toEntity(bookDto, author, genres)));
     }
 
     @Override
     @Transactional
-    public Book update(UpdateBookDto bookDto) {
+    public BookDto update(UpdateBookDto bookDto) {
         bookRepository.findById(bookDto.getId())
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookDto.getId())));
         var author = getAuthorById(bookDto.getAuthorId());
         var genres = getGenresByIds(bookDto.getGenreIds());
-        return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
+        return bookMapper.toDto(bookRepository.save(bookMapper.toEntity(bookDto, author, genres)));
     }
 
     @Override

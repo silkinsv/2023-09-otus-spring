@@ -44,24 +44,24 @@ public class BookRestControllerTest {
 
     @Test
     void shouldCreateBook() throws Exception {
-        var book = dataProvider.getBookList().get(0);
-        var bookDto = dataProvider.getCreateBookDto();
-        given(bookService.create(any())).willReturn(book);
+        var createBookDto = dataProvider.getCreateBookDto();
+        var bookDto = dataProvider.getBookDtoList().get(0);
+        given(bookService.create(any())).willReturn(bookDto);
         mvc.perform(post("/api/v1/books")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(bookDto)))
+                        .content(mapper.writeValueAsString(createBookDto)))
                 .andExpect(status().isCreated())
-                .andExpect(content().json(mapper.writeValueAsString(book)));
+                .andExpect(content().json(mapper.writeValueAsString(bookDto)));
     }
 
     @Test
     void shouldUpdateBook() throws Exception {
-        var book = dataProvider.getBookList().get(0);
-        var bookDto = dataProvider.getUpdateBookDto();
-        given(bookService.update(any(UpdateBookDto.class))).willReturn(book);
-        mvc.perform(put("/api/v1/books")
+        var bookDto = dataProvider.getBookDtoList().get(0);
+        var updateBookDto = dataProvider.getUpdateBookDto();
+        given(bookService.update(any(UpdateBookDto.class))).willReturn(bookDto);
+        mvc.perform(put("/api/v1/books/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(bookDto)))
+                        .content(mapper.writeValueAsString(updateBookDto)))
                 .andExpect(status().isOk());
     }
 

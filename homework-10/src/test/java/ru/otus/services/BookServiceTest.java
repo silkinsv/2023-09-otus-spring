@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.dto.AuthorDto;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
+import ru.otus.dto.GenreDto;
 import ru.otus.mappers.BookMapper;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
@@ -63,7 +65,8 @@ class BookServiceTest {
     @DisplayName("Должен сохранять книгу")
     @Test
     void saveTest() {
-        CreateBookDto bookDto = dataProvider.getCreateBookDto();
+        CreateBookDto createBookDto = dataProvider.getCreateBookDto();
+        AuthorDto authorDto = new AuthorDto(2L, "Author_2");
         Author author = new Author(2L, "Author_2");
         Set<Genre> genres = Set.of(new Genre(3L, "Genre_3"));
         Book book = new Book(null
@@ -74,9 +77,14 @@ class BookServiceTest {
                 , "BookTitle_4"
                 , author
                 , new HashSet<>(genres));
-        when(bookMapper.toEntity(bookDto, author, genres)).thenReturn(book);
+        BookDto expectedBookDto = new BookDto(4L
+                , "BookTitle_4"
+                , authorDto
+                , new GenreDto(3L, "Genre_3"));
+        when(bookMapper.toEntity(createBookDto, author, genres)).thenReturn(book);
         when(bookRepository.save(book)).thenReturn(expectedBook);
-        Book actualBook = bookService.create(bookDto);
-        assertEquals(expectedBook, actualBook);
+        when(bookMapper.toDto(expectedBook)).thenReturn(expectedBookDto);
+        BookDto actualBook = bookService.create(createBookDto);
+        assertEquals(expectedBookDto, actualBook);
     }
 }

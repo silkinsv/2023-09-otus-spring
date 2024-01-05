@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
 import ru.otus.dto.UpdateBookDto;
-import ru.otus.models.Book;
 import ru.otus.services.BookService;
 
 import java.util.List;
@@ -30,19 +29,25 @@ public class BookRestController {
         return bookService.findAll();
     }
 
+    @GetMapping("/api/v1/books/{id}")
+    public BookDto getBookById(@PathVariable("id") Long id) {
+        return bookService.findById(id);
+    }
+
     @DeleteMapping("/api/v1/books/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(@PathVariable("id") Long id) {
         bookService.deleteById(id);
     }
 
-    @PutMapping("/api/v1/books")
-    public void updateBook(@Valid @RequestBody UpdateBookDto book) {
+    @PutMapping("/api/v1/books/{id}")
+    public void updateBook(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookDto book) {
+        book.setId(id);
         bookService.update(book);
     }
 
     @PostMapping("/api/v1/books")
-    public ResponseEntity<Book> create(@Valid @RequestBody CreateBookDto book) {
+    public ResponseEntity<BookDto> create(@Valid @RequestBody CreateBookDto book) {
         return new ResponseEntity<>(bookService.create(book), HttpStatus.CREATED);
     }
 }

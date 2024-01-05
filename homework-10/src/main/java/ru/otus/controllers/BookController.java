@@ -5,14 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.otus.dto.BookDto;
-import ru.otus.services.BookService;
 
 @Controller
 @RequiredArgsConstructor
 public class BookController {
-    private final BookService bookService;
-
     @GetMapping({"/", "/books", "/books/"})
     public String getBookListPage(Model model) {
         return "book-list";
@@ -24,9 +20,7 @@ public class BookController {
     }
 
     @GetMapping("/books/{id}/edit")
-    public String editBookPage(@PathVariable("id") Long id, Model model) {
-        BookDto book = bookService.findById(id);
-        model.addAttribute("book", book);
+    public String editBookPage(@PathVariable("id") Long id) {
         return "book-update";
     }
 }
