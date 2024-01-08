@@ -15,3 +15,4 @@
 | "Белая магия" Spring Data: Spring Data JPA       | homework-07              |
 | Spring Data для подключения к нереляционным БД   | homework-08              |
 | Spring MVC View                                  | homework-09              |
+| Современные приложения на Spring MVC             | homework-10              |
