@@ -7,7 +7,7 @@ import ru.otus.dto.UpdateBookDto;
 import java.util.List;
 
 public interface BookService {
-    BookDto findById(long id);
+    BookDto findById(String id);
 
     List<BookDto> findAll();
 
@@ -15,5 +15,5 @@ public interface BookService {
 
     BookDto update(UpdateBookDto bookDto);
 
-    void deleteById(long id);
+    void deleteById(String id);
 }

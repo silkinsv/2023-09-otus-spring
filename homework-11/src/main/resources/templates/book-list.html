@@ -58,7 +58,7 @@
                     <td>${book.author.fullName}</td>
                     <td>${book.genre.name}</td>
                     <td><button><a href="/books/${book.id}/edit">Edit</a></button></td>
-                    <td><button id="deleteButton" onclick="deleteBook(${book.id})">Delete Book</button></td>
+                    <td><button id="deleteButton" onclick="deleteBook('${book.id}')">Delete Book</button></td>
                    `;
                 tbody.appendChild(tr);
             });

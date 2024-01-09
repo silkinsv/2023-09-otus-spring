@@ -8,5 +8,5 @@ import java.util.List;
 public interface GenreService {
     List<GenreDto> findAll();
 
-    List<Genre> findByIds(List<Long> genresIds);
+    List<Genre> findByIds(List<String> genresIds);
 }

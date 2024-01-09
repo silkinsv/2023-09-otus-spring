@@ -30,18 +30,18 @@ public class BookRestController {
     }
 
     @GetMapping("/api/v1/books/{id}")
-    public BookDto getBookById(@PathVariable("id") Long id) {
+    public BookDto getBookById(@PathVariable("id") String id) {
         return bookService.findById(id);
     }
 
     @DeleteMapping("/api/v1/books/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBook(@PathVariable("id") Long id) {
+    public void deleteBook(@PathVariable("id") String id) {
         bookService.deleteById(id);
     }
 
     @PutMapping("/api/v1/books/{id}")
-    public void updateBook(@PathVariable("id") Long id, @Valid @RequestBody UpdateBookDto book) {
+    public void updateBook(@PathVariable("id") String id, @Valid @RequestBody UpdateBookDto book) {
         book.setId(id);
         bookService.update(book);
     }

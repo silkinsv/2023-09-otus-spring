@@ -95,8 +95,10 @@
         event.preventDefault(); // предотвращаем перезагрузку по умолчанию
 
         const title = document.getElementById('title').value;
-        const authorId = Number(document.getElementById('author').value);
-        const genreIds = Array.from(document.getElementById('genre').value, Number);
+        const authorId = document.getElementById('author').value;
+        const genreSet = new Set();
+        genreSet.add(document.getElementById('genre').value);
+        const genreIds = Array.from(genreSet);
 
         const data = {
             title,

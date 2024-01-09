@@ -1,17 +1,19 @@
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
-      schema-locations: classpath:schema.sql
+data:
+  mongodb:
+    port: 0
+    database: library
 
-  jpa:
-    generate-ddl: false
-    #generate-ddl: true
-    hibernate:
-      ddl-auto: none
-      #ddl-auto: create-drop
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
 
-    show-sql: true
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local

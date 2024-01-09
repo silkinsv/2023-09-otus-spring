@@ -31,10 +31,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookDto findById(long id) {
+    public BookDto findById(String id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
-                .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Book with id %s not found".formatted(id)));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookDto update(UpdateBookDto bookDto) {
         bookRepository.findById(bookDto.getId())
-                .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookDto.getId())));
+                .orElseThrow(() -> new NotFoundException("Book with id %s not found".formatted(bookDto.getId())));
         var author = getAuthorById(bookDto.getAuthorId());
         var genres = getGenresByIds(bookDto.getGenreIds());
         return bookMapper.toDto(bookRepository.save(bookMapper.toEntity(bookDto, author, genres)));
@@ -66,16 +66,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         bookRepository.deleteById(id);
     }
 
-    private Author getAuthorById(long authorId) {
+    private Author getAuthorById(String authorId) {
         return authorRepository.findById(authorId)
-                .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));
+                .orElseThrow(() -> new NotFoundException("Author with id %s not found".formatted(authorId)));
     }
 
-    private Set<Genre> getGenresByIds(Set<Long> genresIds) {
+    private Set<Genre> getGenresByIds(Set<String> genresIds) {
         if (genresIds == null || genresIds.isEmpty()) {
             throw new NotFoundException("Genre list is empty");
         }

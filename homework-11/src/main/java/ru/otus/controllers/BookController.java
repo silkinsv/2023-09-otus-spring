@@ -2,7 +2,6 @@ package ru.otus.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -10,17 +9,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 public class BookController {
     @GetMapping({"/", "/books", "/books/"})
-    public String getBookListPage(Model model) {
+    public String getBookListPage() {
         return "book-list";
     }
 
     @GetMapping("/books/add")
-    public String addBookPage(Model model) {
+    public String addBookPage() {
         return "book-create";
     }
 
     @GetMapping("/books/{id}/edit")
-    public String editBookPage(@PathVariable("id") Long id) {
+    public String editBookPage(@PathVariable("id") String id) {
         return "book-update";
     }
 }

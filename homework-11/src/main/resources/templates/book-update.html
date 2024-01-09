@@ -66,65 +66,117 @@
 </form>
 
 <script>
-    fetch('/api/v1/books/' + document.location.pathname.split('/')[2])
-        .then(response => response.json())
-        .then(data => {
-            const id = document.getElementById('id');
-            const title = document.getElementById('title');
-            const authorId = document.getElementById('authorId');
-            const genreId = document.getElementById('genreId');
+    const fetchBooks = fetch('/api/v1/books/' + document.location.pathname.split('/')[2])
+        .then(response => response.json());
 
-            id.value = data.id;
-            title.value = data.title;
-            authorId.value = data.author.id;
-            genreId.value = data.genre.id;
-        })
-        .catch(error => console.error(error));
+    const fetchAuthors = fetch('/api/v1/authors')
+        .then(response => response.json());
+
+    const fetchGenres = fetch('/api/v1/genres')
+        .then(response => response.json());
+
+    const allData = Promise.all([fetchBooks, fetchAuthors, fetchGenres]);
+
+    allData.then(data => {
+
+        const id = document.getElementById('id');
+        const title = document.getElementById('title');
+        const authorId = document.getElementById('authorId');
+        const genreId = document.getElementById('genreId');
+
+        id.value = data[0].id;
+        title.value = data[0].title;
+        authorId.value = data[0].author.id;
+        genreId.value = data[0].genre.id;
+
+        const authorSelect = document.getElementById('author');
+        console.log(data);
+        console.log("authorId=" + authorId.value)
+
+        data[1].forEach(author => {
+            console.log("author " + author.id + " " + author.fullName);
+            const option = document.createElement('option');
+            option.value = author.id;
+            option.textContent = author.fullName;
+            if (author.id == authorId.value) { // выбираем соответствующий элемент
+                option.selected = true;
+            }
+            authorSelect.appendChild(option);
+        });
+
+        const genreSelect = document.getElementById('genre');
+        data[2].forEach(genre => {
+            const option = document.createElement('option');
+            option.value = genre.id;
+            option.textContent = genre.name;
+            if (genre.id == genreId.value) { // выбираем соответствующий элемент
+                option.selected = true;
+            }
+            genreSelect.appendChild(option);
+        });
+    });
 </script>
 
-<script>
-    fetch('/api/v1/authors')
-        .then(response => response.json())
-        .then(data => {
-            const authorSelect = document.getElementById('author');
-            const authorId = document.getElementById('authorId').value;
-            console.log("authorId=" + authorId)
-            data.forEach(author => {
-                const option = document.createElement('option');
-                option.value = author.id;
-                option.textContent = author.fullName;
-                console.log("author" + author.id + " " + author.fullName)
-                console.log("author.id = " + author.id + " authorId = " + authorId)
-                if (author.id == authorId) { // выбираем соответствующий элемент
-                    option.selected = true;
-                    console.log("SELECTED author.id = " + author.id + " authorId = " + authorId)
-                }
-                authorSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error(error));
-</script>
+<!--<script>-->
+<!--    fetch('/api/v1/books/' + document.location.pathname.split('/')[2])-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const id = document.getElementById('id');-->
+<!--            const title = document.getElementById('title');-->
+<!--            const authorId = document.getElementById('authorId');-->
+<!--            const genreId = document.getElementById('genreId');-->
 
-<script>
-    fetch('/api/v1/genres')
-        .then(response => response.json())
-        .then(data => {
-            const genreSelect = document.getElementById('genre');
-            const genreId = document.getElementById('genreId').value;
-            console.log("genreId=" + genreId)
-            data.forEach(genre => {
-                const option = document.createElement('option');
-                option.value = genre.id;
-                option.textContent = genre.name;
-                console.log("genre" + genre.id + " " + genre.name)
-                if (genre.id == genreId) { // выбираем соответствующий элемент
-                    option.selected = true;
-                }
-                genreSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error(error));
-</script>
+<!--            id.value = data.id;-->
+<!--            title.value = data.title;-->
+<!--            authorId.value = data.author.id;-->
+<!--            genreId.value = data.genre.id;-->
+<!--        })-->
+<!--        .catch(error => console.error(error));-->
+<!--</script>-->
+
+<!--<script>-->
+<!--    fetch('/api/v1/authors')-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const authorSelect = document.getElementById('author');-->
+<!--            const authorId = document.getElementById('authorId').value;-->
+<!--            console.log("authorId=" + authorId)-->
+<!--            data.forEach(author => {-->
+<!--                const option = document.createElement('option');-->
+<!--                option.value = author.id;-->
+<!--                option.textContent = author.fullName;-->
+<!--                console.log("author" + author.id + " " + author.fullName)-->
+<!--                console.log("author.id = " + author.id + " authorId = " + authorId)-->
+<!--                if (author.id == authorId) { // выбираем соответствующий элемент-->
+<!--                    option.selected = true;-->
+<!--                    console.log("SELECTED author.id = " + author.id + " authorId = " + authorId)-->
+<!--                }-->
+<!--                authorSelect.appendChild(option);-->
+<!--            });-->
+<!--        })-->
+<!--        .catch(error => console.error(error));-->
+<!--</script>-->
+
+<!--<script>-->
+<!--    fetch('/api/v1/genres')-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const genreSelect = document.getElementById('genre');-->
+<!--            const genreId = document.getElementById('genreId').value;-->
+<!--            console.log("genreId=" + genreId)-->
+<!--            data.forEach(genre => {-->
+<!--                const option = document.createElement('option');-->
+<!--                option.value = genre.id;-->
+<!--                option.textContent = genre.name;-->
+<!--                console.log("genre" + genre.id + " " + genre.name)-->
+<!--                if (genre.id == genreId) { // выбираем соответствующий элемент-->
+<!--                    option.selected = true;-->
+<!--                }-->
+<!--                genreSelect.appendChild(option);-->
+<!--            });-->
+<!--        })-->
+<!--        .catch(error => console.error(error));-->
+<!--</script>-->
 
 <script>
     const form = document.getElementById('edit-form');
@@ -134,8 +186,11 @@
         const id = document.getElementById('id').value;
         const title = document.getElementById('title').value;
         const authorId = document.getElementById('author').value;
-        const genreIds = Array.from(document.getElementById('genre').value, Number);
+        const genreSet = new Set();
+        genreSet.add(document.getElementById('genre').value);
+        const genreIds = Array.from(genreSet);
 
+        console.log(genreIds)
         const data = {
             id,
             title,

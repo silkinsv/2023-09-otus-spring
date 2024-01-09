@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 public class GenreDto {
-    private long id;
+    private String id;
 
     @NotBlank
     private String name;
