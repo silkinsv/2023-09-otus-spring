@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:maindb
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      schema-locations: classpath:schema.sql
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      path: /h2-console
+      settings:
+        web-allow-others: true
