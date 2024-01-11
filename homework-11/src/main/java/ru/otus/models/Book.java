@@ -8,8 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -25,11 +23,11 @@ public class Book {
     @DBRef
     private Author author;
 
-    private Set<Genre> genres;
+    private Genre genre;
 
-    public Book(String title, Author author, Set<Genre> genres) {
+    public Book(String title, Author author, Genre genre) {
         this.title = title;
         this.author = author;
-        this.genres = genres;
+        this.genre = genre;
     }
 }

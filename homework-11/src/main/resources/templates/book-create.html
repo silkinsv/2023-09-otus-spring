@@ -96,14 +96,12 @@
 
         const title = document.getElementById('title').value;
         const authorId = document.getElementById('author').value;
-        const genreSet = new Set();
-        genreSet.add(document.getElementById('genre').value);
-        const genreIds = Array.from(genreSet);
+        const genreId = document.getElementById('genre').value;
 
         const data = {
             title,
             authorId,
-            genreIds
+            genreId
         };
 
         fetch('/api/v1/books', {

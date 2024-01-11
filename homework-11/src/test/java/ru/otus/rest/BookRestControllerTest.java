@@ -1,75 +1,98 @@
 package ru.otus.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.dto.BookDto;
-import ru.otus.dto.UpdateBookDto;
 import ru.otus.services.BookService;
 import ru.otus.utils.DataProvider;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@WebMvcTest(BookRestController.class)
-@AutoConfigureDataMongo
+@WebFluxTest(BookRestController.class)
+@ContextConfiguration(classes = {BookRestController.class})
 public class BookRestControllerTest {
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper mapper;
-
     @MockBean
-    private BookService bookService;
+    BookService bookService;
+
+    @Autowired
+    private WebTestClient webTestClient;
 
     final DataProvider dataProvider = new DataProvider();
 
     @Test
-    void shouldReturnCorrectBookList() throws Exception {
-        List<BookDto> bookList = dataProvider.getBookDtoList();
-        given(bookService.findAll()).willReturn(bookList);
-        mvc.perform(get("/api/v1/books"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(bookList)));
+    void shouldReturnCorrectBookList() {
+        when(bookService.findAll()).thenReturn(Flux.fromIterable(dataProvider.getBookDtoList()));
+
+        List<BookDto> result = webTestClient
+                .get().uri("/api/v1/books")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(BookDto.class)
+                .hasSize(3)
+                .returnResult()
+                .getResponseBody();
+
+        verify(bookService).findAll();
+        assertThat(result).containsExactlyElementsOf(dataProvider.getBookDtoList());
     }
 
     @Test
-    void shouldCreateBook() throws Exception {
-        var createBookDto = dataProvider.getCreateBookDto();
-        var bookDto = dataProvider.getBookDtoList().get(0);
-        given(bookService.create(any())).willReturn(bookDto);
-        mvc.perform(post("/api/v1/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(createBookDto)))
-                .andExpect(status().isCreated())
-                .andExpect(content().json(mapper.writeValueAsString(bookDto)));
+    void shouldCreateBook() {
+
+        when(bookService.create(any())).thenReturn(Mono.just(dataProvider.getBookDtoList().get(0)));
+
+        BookDto result = webTestClient
+                .post().uri("/api/v1/books")
+                .bodyValue(dataProvider.getCreateBookDto())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BookDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertEquals(dataProvider.getBookDtoList().get(0), result);
     }
 
     @Test
-    void shouldUpdateBook() throws Exception {
-        var bookDto = dataProvider.getBookDtoList().get(0);
-        var updateBookDto = dataProvider.getUpdateBookDto();
-        given(bookService.update(any(UpdateBookDto.class))).willReturn(bookDto);
-        mvc.perform(put("/api/v1/books/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(updateBookDto)))
-                .andExpect(status().isOk());
+    void shouldUpdateBook() {
+        when(bookService.update(any())).thenReturn(Mono.just(dataProvider.getBookDtoList().get(1)));
+
+        BookDto result = webTestClient
+                .put().uri("/api/v1/books/{id}", "1L")
+                .bodyValue(dataProvider.getUpdateBookDto())
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(BookDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        verify(bookService).update(dataProvider.getUpdateBookDto());
+        assertEquals(dataProvider.getBookDtoList().get(1), result);
     }
 
     @Test
-    void shouldDeleteBook() throws Exception {
-        mvc.perform(delete("/api/v1/books/1"))
-                .andExpect(status().isNoContent());
+    void shouldDeleteBook() {
+        webTestClient
+                .delete().uri("/api/v1/books/{id}", "1L")
+                .exchange()
+                .expectStatus().isOk();
+
+        verify(bookService).deleteById("1L");
     }
 }

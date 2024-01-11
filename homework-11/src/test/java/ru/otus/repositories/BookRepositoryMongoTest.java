@@ -12,8 +12,6 @@ import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
 
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе mongodb для работы с книгами ")
@@ -30,7 +28,7 @@ class BookRepositoryMongoTest {
     private static final String FIRST_GENRE_NAME = "Genre_1";
 
     @Autowired
-    private BookRepository bookRepository;
+    private BookRepositoryNonReactive bookRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -74,7 +72,7 @@ class BookRepositoryMongoTest {
 
         Assertions.assertNull(nonExistingBookOptional);
 
-        var expectedBook = new Book(null, "BookTitle_10500", author, Set.of(genre));
+        var expectedBook = new Book(null, "BookTitle_10500", author, genre);
         var returnedBook = bookRepository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> !book.getId().isEmpty())
@@ -93,7 +91,7 @@ class BookRepositoryMongoTest {
         query.addCriteria(Criteria.where("title").is(UPDATE_BOOK_TITLE));
         var tempBook = mongoTemplate.findOne(query, Book.class);
 
-        var expectedBook = new Book(tempBook.getId(), "BookTitle_10500", tempBook.getAuthor(), tempBook.getGenres());
+        var expectedBook = new Book(tempBook.getId(), "BookTitle_10500", tempBook.getAuthor(), tempBook.getGenre());
 
         assertThat(bookRepository.findById(expectedBook.getId()))
                 .isPresent()

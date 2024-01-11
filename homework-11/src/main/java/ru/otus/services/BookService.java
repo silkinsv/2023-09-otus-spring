@@ -1,19 +1,19 @@
 package ru.otus.services;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
 import ru.otus.dto.UpdateBookDto;
 
-import java.util.List;
-
 public interface BookService {
-    BookDto findById(String id);
+    Mono<BookDto> findById(String id);
 
-    List<BookDto> findAll();
+    Flux<BookDto> findAll();
 
-    BookDto create(CreateBookDto bookDto);
+    Mono<BookDto> create(CreateBookDto bookDto);
 
-    BookDto update(UpdateBookDto bookDto);
+    Mono<BookDto> update(UpdateBookDto bookDto);
 
-    void deleteById(String id);
+    Mono<Void> deleteById(String id);
 }

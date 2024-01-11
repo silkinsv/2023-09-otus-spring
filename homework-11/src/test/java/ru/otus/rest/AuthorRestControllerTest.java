@@ -1,44 +1,49 @@
 package ru.otus.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import ru.otus.dto.AuthorDto;
 import ru.otus.services.AuthorService;
 import ru.otus.utils.DataProvider;
 
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@WebMvcTest(AuthorRestController.class)
-@AutoConfigureDataMongo
+@WebFluxTest(AuthorRestController.class)
+@ContextConfiguration(classes = {AuthorRestController.class})
 public class AuthorRestControllerTest {
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper mapper;
-
     @MockBean
-    private AuthorService authorService;
+    AuthorService authorService;
+
+    @Autowired
+    private WebTestClient webTestClient;
 
     final DataProvider dataProvider = new DataProvider();
 
     @Test
-    void shouldReturnCorrectAuthorList() throws Exception {
-        List<AuthorDto> authorList = dataProvider.getAuthorDtoList();
-        given(authorService.findAll()).willReturn(authorList);
+    void shouldReturnCorrectAuthorList() {
+        when(authorService.findAll()).thenReturn(Flux.fromIterable(dataProvider.getAuthorDtoList()));
 
-        mvc.perform(get("/api/v1/authors"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(authorList)));
+        List<AuthorDto> result = webTestClient
+                .get().uri("/api/v1/authors")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(AuthorDto.class)
+                .hasSize(3)
+                .returnResult()
+                .getResponseBody();
+
+        verify(authorService).findAll();
+        assertThat(result).containsExactlyElementsOf(dataProvider.getAuthorDtoList());
     }
 }

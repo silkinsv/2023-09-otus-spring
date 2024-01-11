@@ -1,44 +1,49 @@
 package ru.otus.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import ru.otus.dto.GenreDto;
 import ru.otus.services.GenreService;
 import ru.otus.utils.DataProvider;
 
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@WebMvcTest(GenreRestController.class)
-@AutoConfigureDataMongo
+@WebFluxTest(GenreRestController.class)
+@ContextConfiguration(classes = {GenreRestController.class})
 public class GenreRestControllerTest {
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper mapper;
-
     @MockBean
-    private GenreService genreService;
+    GenreService genreService;
+
+    @Autowired
+    private WebTestClient webTestClient;
 
     final DataProvider dataProvider = new DataProvider();
 
     @Test
-    void shouldReturnCorrectGenreList() throws Exception {
-        List<GenreDto> genreList = dataProvider.getGenreDtoList();
-        given(genreService.findAll()).willReturn(genreList);
+    void shouldReturnCorrectGenreList() {
+        when(genreService.findAll()).thenReturn(Flux.fromIterable(dataProvider.getGenreDtoList()));
 
-        mvc.perform(get("/api/v1/genres"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(genreList)));
+        List<GenreDto> result = webTestClient
+                .get().uri("/api/v1/genres")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(GenreDto.class)
+                .hasSize(6)
+                .returnResult()
+                .getResponseBody();
+
+        verify(genreService).findAll();
+        assertThat(result).containsExactlyElementsOf(dataProvider.getGenreDtoList());
     }
 }

@@ -186,16 +186,13 @@
         const id = document.getElementById('id').value;
         const title = document.getElementById('title').value;
         const authorId = document.getElementById('author').value;
-        const genreSet = new Set();
-        genreSet.add(document.getElementById('genre').value);
-        const genreIds = Array.from(genreSet);
+        const genreId = document.getElementById('genre').value;
 
-        console.log(genreIds)
         const data = {
             id,
             title,
             authorId,
-            genreIds
+            genreId
         };
 
         fetch('/api/v1/books/' + id, {
@@ -206,12 +203,13 @@
             body: JSON.stringify(data)
         })
             .then(response => {
-                if (response.ok) {
-                    console.log('Book updated');
-                    location.reload(); // перезагрузка страницы
-                } else {
-                    throw new Error(response.status);
-                }
+                console.log(response);
+                // if (response.ok) {
+                //     console.log('Book updated');
+                //     location.reload(); // перезагрузка страницы
+                // } else {
+                //     throw new Error(response.status);
+                // }
             })
             .catch(
                 error => {

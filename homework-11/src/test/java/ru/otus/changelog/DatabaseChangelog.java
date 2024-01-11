@@ -6,9 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
-import ru.otus.repositories.AuthorRepository;
-import ru.otus.repositories.BookRepository;
-import ru.otus.repositories.GenreRepository;
+import ru.otus.repositories.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,7 +25,7 @@ public class DatabaseChangelog {
     }
 
     @ChangeSet(order = "002", id = "insertAuthors", author = "silkinsv")
-    public void insertAuthors(AuthorRepository repository) {
+    public void insertAuthors(AuthorRepositoryNonReactive repository) {
         List<Author> authors = new ArrayList<>();
         authors.add(new Author("Author_1"));
         authors.add(new Author("Author_2"));
@@ -37,7 +35,7 @@ public class DatabaseChangelog {
     }
 
     @ChangeSet(order = "003", id = "insertGenres", author = "silkinsv")
-    public void insertGenres(GenreRepository repository) {
+    public void insertGenres(GenreRepositoryNonReactive repository) {
         List<Genre> genres = new ArrayList<>();
         genres.add(new Genre("Genre_1"));
         genres.add(new Genre("Genre_2"));
@@ -50,24 +48,12 @@ public class DatabaseChangelog {
     }
 
     @ChangeSet(order = "004", id = "insertBooks", author = "silkinsv")
-    public void insertBooks(BookRepository repository) {
+    public void insertBooks(BookRepositoryNonReactive repository) {
         List<Book> books = new ArrayList<>();
-        Set<Genre> genres = new HashSet<>();
-        genres.add(genreMap.get("Genre_1"));
-        genres.add(genreMap.get("Genre_2"));
-        books.add(new Book("BookTitle_1", authorMap.get("Author_1"), new HashSet<>(genres)));
-        genres.clear();
-
-        genres.add(genreMap.get("Genre_3"));
-        genres.add(genreMap.get("Genre_4"));
-        books.add(new Book("BookTitle_2", authorMap.get("Author_2"), new HashSet<>(genres)));
-        genres.clear();
-
-        genres.add(genreMap.get("Genre_5"));
-        genres.add(genreMap.get("Genre_6"));
-        books.add(new Book("BookTitle_3", authorMap.get("Author_3"), new HashSet<>(genres)));
-        genres.clear();
-
+        books.add(new Book("BookTitle_1", authorMap.get("Author_1"), genreMap.get("Genre_1")));
+        books.add(new Book("BookTitle_2", authorMap.get("Author_2"), genreMap.get("Genre_2")));
+        books.add(new Book("BookTitle_3", authorMap.get("Author_3"), genreMap.get("Genre_3")));
+        books.add(new Book("1L", "BookTitle_4", authorMap.get("Author_1"), genreMap.get("Genre_1")));
         books = repository.saveAll(books);
         bookMap = books.stream().collect(Collectors.toMap(Book::getTitle, book -> book));
     }
