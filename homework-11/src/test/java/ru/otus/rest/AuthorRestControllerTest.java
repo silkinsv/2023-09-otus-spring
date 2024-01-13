@@ -9,7 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import ru.otus.dto.AuthorDto;
-import ru.otus.services.AuthorService;
+import ru.otus.mappers.AuthorMapper;
+import ru.otus.repositories.AuthorRepository;
 import ru.otus.utils.DataProvider;
 
 import java.util.List;
@@ -22,7 +23,10 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = {AuthorRestController.class})
 public class AuthorRestControllerTest {
     @MockBean
-    AuthorService authorService;
+    AuthorRepository authorRepository;
+
+    @MockBean
+    AuthorMapper authorMapper;
 
     @Autowired
     private WebTestClient webTestClient;
@@ -31,7 +35,10 @@ public class AuthorRestControllerTest {
 
     @Test
     void shouldReturnCorrectAuthorList() {
-        when(authorService.findAll()).thenReturn(Flux.fromIterable(dataProvider.getAuthorDtoList()));
+        when(authorRepository.findAll()).thenReturn(Flux.fromIterable(dataProvider.getAuthorList()));
+        when(authorMapper.toDto(dataProvider.getAuthorList().get(0))).thenReturn(dataProvider.getAuthorDtoList().get(0));
+        when(authorMapper.toDto(dataProvider.getAuthorList().get(1))).thenReturn(dataProvider.getAuthorDtoList().get(1));
+        when(authorMapper.toDto(dataProvider.getAuthorList().get(2))).thenReturn(dataProvider.getAuthorDtoList().get(2));
 
         List<AuthorDto> result = webTestClient
                 .get().uri("/api/v1/authors")
@@ -43,7 +50,7 @@ public class AuthorRestControllerTest {
                 .returnResult()
                 .getResponseBody();
 
-        verify(authorService).findAll();
+        verify(authorRepository).findAll();
         assertThat(result).containsExactlyElementsOf(dataProvider.getAuthorDtoList());
     }
 }
