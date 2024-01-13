@@ -7,7 +7,6 @@ import ru.otus.models.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DataProvider {
     private final List<BookDto> bookDtoList;
