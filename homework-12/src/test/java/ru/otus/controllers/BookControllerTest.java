@@ -1,10 +1,16 @@
 package ru.otus.controllers;
 
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.dto.AuthorDto;
 import ru.otus.dto.BookDto;
@@ -17,15 +23,18 @@ import ru.otus.utils.DataProvider;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.verify;
 
 @WebMvcTest(BookController.class)
+@ExtendWith(SpringExtension.class)
 class BookControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -41,7 +50,13 @@ class BookControllerTest {
 
     final DataProvider dataProvider = new DataProvider();
 
+    @Before(value = "deleteBookPageTest")
+    public void init() {
+        Mockito.doNothing().when(bookService).deleteById(any());
+    }
+
     @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void getBookListPageTest() throws Exception {
         given(bookService.findAll()).willReturn(dataProvider.getBookDtoList());
         mvc.perform(get("/"))
@@ -52,13 +67,21 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void deleteBookPageTest() throws Exception {
-        mvc.perform(delete("/books/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/books"));
+        mvc.perform(delete("/books/1").with(csrf()))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/books"));
     }
 
     @Test
+    void deleteBookPageTestForNonAuthorizedUser() throws Exception {
+        mvc.perform(delete("/books/1").with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void addBookPageTest() throws Exception {
         List<AuthorDto> authors = dataProvider.getAuthorDtoList();
         List<GenreDto> genres = dataProvider.getGenreDtoList();
@@ -78,9 +101,11 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void saveBookTest() throws Exception {
+        when(bookService.create(any())).thenReturn(dataProvider.getBookList().get(1));
         CreateBookDto book = dataProvider.getCreateBookDto();
-        mvc.perform(post("/books/create").flashAttr("createBookDto", book))
+        mvc.perform(post("/books/create").flashAttr("createBookDto", book).with(csrf()))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books"));
@@ -89,6 +114,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "admin", authorities = {"ADMIN"})
     public void editBookPageTest() throws Exception {
         List<AuthorDto> authors = dataProvider.getAuthorDtoList();
         List<GenreDto> genres = dataProvider.getGenreDtoList();

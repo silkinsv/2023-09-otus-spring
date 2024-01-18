@@ -57,3 +57,18 @@ merge into books_genres as dst
 when not matched then
     insert (book_id, genre_id)
     values (src.book_id, src.genre_id);
+
+merge into users as dst
+    using
+        (
+            select 'admin' as username, '$2a$10$NUwhgtEr7LV.2NsERGa1U.bVk6fCZyed2y7pip0aswyivy10uqOK2' as password, 'ADMIN' as role union all
+            select 'user' as username, '$2a$10$H0eVrjuyLIE/GJcJ5VaaNu.OyjZaueCMxcYeEZK2TFO4dF5T2UVhG' as password, 'USER' as role
+        ) src ON src.username = dst.username
+    when not matched then
+        insert (username, password, role)
+            values (src.username, src.password, src.role)
+    when matched then
+        update
+            set username = src.username,
+                password = src.password,
+                role = src.role;
