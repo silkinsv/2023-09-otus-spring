@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all books</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+<h3>Books:</h3>
+<a href="book-create.html" th:href="@{/books/add}">Add</a>
+<br>
+<table class="books" id="books">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    const table = document.getElementById('books');
+
+    fetch('/api/v1/books')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = table.querySelector('tbody');
+            data.forEach(book => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author.fullName}</td>
+                    <td>${book.genre.name}</td>
+                    <td><button><a href="/books/${book.id}/edit">Edit</a></button></td>
+                    <td><button id="deleteButton" onclick="deleteBook('${book.id}')">Delete Book</button></td>
+                   `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error(error));
+</script>
+
+<script>
+    function deleteBook(id) {
+        fetch('/api/v1/books/' + id, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Book deleted');
+                    location.reload(); // перезагрузка страницы
+                } else {
+                    console.error('Error deleting book');
+                }
+            })
+            .catch(error => console.error(error));
+    }
+</script>
+
+</body>
+</html>

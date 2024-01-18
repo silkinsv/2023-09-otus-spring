@@ -16,3 +16,4 @@
 | Spring Data для подключения к нереляционным БД   | homework-08              |
 | Spring MVC View                                  | homework-09              |
 | Современные приложения на Spring MVC             | homework-10              |
+| Spring WebFlux                                   | homework-11              |

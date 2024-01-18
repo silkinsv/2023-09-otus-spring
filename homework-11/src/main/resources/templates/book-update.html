@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Save book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 300px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .genres tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .genres td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="edit-form">
+    <h3>Book Info:</h3>
+
+    <label for="id"></label>
+    <input id="id" readonly="readonly"/>
+    <label for="authorId"></label><input hidden="hidden" id="authorId"/>
+    <label for="genreId"></label><input hidden="hidden" id="genreId"/>
+    <div class="row">
+        <label for="title">Title:</label>
+        <input type="text" id="title"/>
+    </div>
+    <div class="row">
+        <label for="author">Author:</label>
+        <select id="author">
+        </select>
+    </div>
+    <div class="row">
+        <label for="genre">Genre:</label>
+        <select id="genre">
+        </select>
+    </div>
+    <div class="row">
+        <button type="submit">Save</button>
+        <a href="books-list.html" th:href="@{/books}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+<script>
+    const fetchBooks = fetch('/api/v1/books/' + document.location.pathname.split('/')[2])
+        .then(response => response.json());
+
+    const fetchAuthors = fetch('/api/v1/authors')
+        .then(response => response.json());
+
+    const fetchGenres = fetch('/api/v1/genres')
+        .then(response => response.json());
+
+    const allData = Promise.all([fetchBooks, fetchAuthors, fetchGenres]);
+
+    allData.then(data => {
+
+        const id = document.getElementById('id');
+        const title = document.getElementById('title');
+        const authorId = document.getElementById('authorId');
+        const genreId = document.getElementById('genreId');
+
+        id.value = data[0].id;
+        title.value = data[0].title;
+        authorId.value = data[0].author.id;
+        genreId.value = data[0].genre.id;
+
+        const authorSelect = document.getElementById('author');
+        console.log(data);
+        console.log("authorId=" + authorId.value)
+
+        data[1].forEach(author => {
+            console.log("author " + author.id + " " + author.fullName);
+            const option = document.createElement('option');
+            option.value = author.id;
+            option.textContent = author.fullName;
+            if (author.id == authorId.value) { // выбираем соответствующий элемент
+                option.selected = true;
+            }
+            authorSelect.appendChild(option);
+        });
+
+        const genreSelect = document.getElementById('genre');
+        data[2].forEach(genre => {
+            const option = document.createElement('option');
+            option.value = genre.id;
+            option.textContent = genre.name;
+            if (genre.id == genreId.value) { // выбираем соответствующий элемент
+                option.selected = true;
+            }
+            genreSelect.appendChild(option);
+        });
+    });
+</script>
+
+<!--<script>-->
+<!--    fetch('/api/v1/books/' + document.location.pathname.split('/')[2])-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const id = document.getElementById('id');-->
+<!--            const title = document.getElementById('title');-->
+<!--            const authorId = document.getElementById('authorId');-->
+<!--            const genreId = document.getElementById('genreId');-->
+
+<!--            id.value = data.id;-->
+<!--            title.value = data.title;-->
+<!--            authorId.value = data.author.id;-->
+<!--            genreId.value = data.genre.id;-->
+<!--        })-->
+<!--        .catch(error => console.error(error));-->
+<!--</script>-->
+
+<!--<script>-->
+<!--    fetch('/api/v1/authors')-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const authorSelect = document.getElementById('author');-->
+<!--            const authorId = document.getElementById('authorId').value;-->
+<!--            console.log("authorId=" + authorId)-->
+<!--            data.forEach(author => {-->
+<!--                const option = document.createElement('option');-->
+<!--                option.value = author.id;-->
+<!--                option.textContent = author.fullName;-->
+<!--                console.log("author" + author.id + " " + author.fullName)-->
+<!--                console.log("author.id = " + author.id + " authorId = " + authorId)-->
+<!--                if (author.id == authorId) { // выбираем соответствующий элемент-->
+<!--                    option.selected = true;-->
+<!--                    console.log("SELECTED author.id = " + author.id + " authorId = " + authorId)-->
+<!--                }-->
+<!--                authorSelect.appendChild(option);-->
+<!--            });-->
+<!--        })-->
+<!--        .catch(error => console.error(error));-->
+<!--</script>-->
+
+<!--<script>-->
+<!--    fetch('/api/v1/genres')-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            const genreSelect = document.getElementById('genre');-->
+<!--            const genreId = document.getElementById('genreId').value;-->
+<!--            console.log("genreId=" + genreId)-->
+<!--            data.forEach(genre => {-->
+<!--                const option = document.createElement('option');-->
+<!--                option.value = genre.id;-->
+<!--                option.textContent = genre.name;-->
+<!--                console.log("genre" + genre.id + " " + genre.name)-->
+<!--                if (genre.id == genreId) { // выбираем соответствующий элемент-->
+<!--                    option.selected = true;-->
+<!--                }-->
+<!--                genreSelect.appendChild(option);-->
+<!--            });-->
+<!--        })-->
+<!--        .catch(error => console.error(error));-->
+<!--</script>-->
+
+<script>
+    const form = document.getElementById('edit-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // предотвращаем перезагрузку по умолчанию
+
+        const id = document.getElementById('id').value;
+        const title = document.getElementById('title').value;
+        const authorId = document.getElementById('author').value;
+        const genreId = document.getElementById('genre').value;
+
+        const data = {
+            id,
+            title,
+            authorId,
+            genreId
+        };
+
+        fetch('/api/v1/books/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                console.log(response);
+                // if (response.ok) {
+                //     console.log('Book updated');
+                //     location.reload(); // перезагрузка страницы
+                // } else {
+                //     throw new Error(response.status);
+                // }
+            })
+            .catch(
+                error => {
+                    if (error.message === '400') {
+                        alert('Wrong title');
+                    } else {
+                        console.error('Error updating book');
+                    }
+                }
+            );
+    });
+</script>
+
+</body>
+</html>
