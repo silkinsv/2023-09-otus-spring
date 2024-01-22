@@ -17,3 +17,4 @@
 | Spring MVC View                                  | homework-09              |
 | Современные приложения на Spring MVC             | homework-10              |
 | Spring WebFlux                                   | homework-11              |
+| Spring Security: Механизмы аутентификации        | homework-12              |
