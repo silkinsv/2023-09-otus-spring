@@ -61,14 +61,36 @@ when not matched then
 merge into users as dst
     using
         (
-            select 'admin' as username, '$2a$10$NUwhgtEr7LV.2NsERGa1U.bVk6fCZyed2y7pip0aswyivy10uqOK2' as password, 'ADMIN' as role union all
-            select 'user' as username, '$2a$10$H0eVrjuyLIE/GJcJ5VaaNu.OyjZaueCMxcYeEZK2TFO4dF5T2UVhG' as password, 'USER' as role
+            select 'admin' as username, '$2a$10$NUwhgtEr7LV.2NsERGa1U.bVk6fCZyed2y7pip0aswyivy10uqOK2' as password union all
+            select 'user' as username, '$2a$10$H0eVrjuyLIE/GJcJ5VaaNu.OyjZaueCMxcYeEZK2TFO4dF5T2UVhG' as password
         ) src ON src.username = dst.username
     when not matched then
-        insert (username, password, role)
-            values (src.username, src.password, src.role)
+        insert (username, password)
+            values (src.username, src.password)
     when matched then
         update
             set username = src.username,
-                password = src.password,
-                role = src.role;
+                password = src.password;
+
+merge into roles as dst
+    using
+        (
+            select 'ADMIN' as name union all
+            select 'USER' as name
+        ) src on src.name = dst.name
+    when not matched then
+        insert (name)
+            values (src.name)
+    when matched then
+        update
+            set name = src.name;
+
+merge into users_roles as dst
+    using
+        (
+            select 1 as user_id, 1 as role_id union all
+            select 2 as user_id, 2 as role_id
+        ) src ON src.user_id = dst.user_id and src.role_id = dst.role_id
+    when not matched then
+        insert (user_id, role_id)
+            values (src.user_id, src.role_id);

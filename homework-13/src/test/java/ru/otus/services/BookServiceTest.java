@@ -2,9 +2,12 @@ package ru.otus.services;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
 import ru.otus.mappers.BookMapper;
@@ -21,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 @DisplayName("Тестирование Book Service")
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 class BookServiceTest {
     @MockBean
     BookRepository bookRepository;
@@ -37,6 +41,7 @@ class BookServiceTest {
 
     @DisplayName("Должен возвращать книгу по Id")
     @Test
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void findBookByIdTest() {
         BookDto expectedBookDto = dataProvider.getBookDtoList().get(0);
         Book expectedBook = dataProvider.getBookList().get(0);
@@ -48,6 +53,7 @@ class BookServiceTest {
 
     @DisplayName("Должен возвращать все книги")
     @Test
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void findAllBookByIdTest() {
         List<BookDto> expectedBookDtoList = dataProvider.getBookDtoList();
         List<Book> expectedBookList = dataProvider.getBookList();
@@ -62,6 +68,7 @@ class BookServiceTest {
 
     @DisplayName("Должен сохранять книгу")
     @Test
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void saveTest() {
         CreateBookDto bookDto = dataProvider.getCreateBookDto();
         Author author = new Author(2L, "Author_2");
