@@ -23,4 +23,3 @@ public class DatabaseUserDetailsService implements UserDetailsService {
         return new UserPrincipal(user);
     }
 }
-
