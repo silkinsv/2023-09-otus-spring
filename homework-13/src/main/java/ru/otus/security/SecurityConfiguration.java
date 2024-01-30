@@ -19,6 +19,8 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((request) -> request
+                        .requestMatchers("/books/add", "/books/*/edit").hasAnyRole("ADMIN")
+                        .requestMatchers("/", "/books", "/books/").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
