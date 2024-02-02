@@ -18,7 +18,8 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));;
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return new UserPrincipal(user);
     }
 }
