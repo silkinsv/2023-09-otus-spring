@@ -14,16 +14,6 @@ create table if not exists books (
     id bigserial,
     title varchar(255) not null,
     author_id bigint not null references authors (id) on delete cascade,
-    genre_id bogint not null references genres (id) on delete cascade,
-    primary key (id)
-);
-
-create table if not exists comments
-(
-    id bigserial,
-    text varchar(255) not null,
-    login varchar(255) not null,
-    timestamp timestamp not null,
-    book_id bigint references books (id) on delete cascade,
+    genre_id bigint not null references genres (id) on delete cascade,
     primary key (id)
 );

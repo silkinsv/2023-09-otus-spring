@@ -1,7 +1,10 @@
 package ru.otus.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import ru.otus.models.Author;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import ru.otus.models.documents.AuthorDocument;
 
-public interface AuthorRepository extends JpaRepository<Author, Long> {
+import java.util.Optional;
+
+public interface AuthorRepository extends MongoRepository<AuthorDocument, String> {
+    Optional<AuthorDocument> findFirstByMigrationId(Long migrationId);
 }

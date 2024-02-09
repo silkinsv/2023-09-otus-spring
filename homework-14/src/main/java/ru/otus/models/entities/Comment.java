@@ -1,4 +1,4 @@
-package ru.otus.models;
+package ru.otus.models.entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Entity;
@@ -16,8 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @NamedEntityGraphs(value = {
         @NamedEntityGraph(name = Comment.WITH_BOOK_GRAPH, attributeNodes = {
@@ -42,9 +40,6 @@ public class Comment {
 
     @Column(name = "login", nullable = false)
     private String login;
-
-    @Column(name = "timestamp", nullable = false)
-    private Instant timestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)

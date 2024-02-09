@@ -1,4 +1,4 @@
-package ru.otus.models;
+package ru.otus.models.entities;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Entity;
@@ -12,22 +12,15 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinTable;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import java.util.Set;
-
 
 @NamedEntityGraphs(value = {
         @NamedEntityGraph(name = Book.WITH_AUTHOR_GENRES_GRAPH, attributeNodes = {
                 @NamedAttributeNode("author"),
-                @NamedAttributeNode("genres")
+                @NamedAttributeNode("genre")
         }),
         @NamedEntityGraph(name = Book.WITH_AUTHOR_GRAPH, attributeNodes = {
                 @NamedAttributeNode("author")
@@ -54,9 +47,7 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @Fetch(FetchMode.SUBSELECT)
-    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinTable(name = "books_genres", joinColumns = @JoinColumn(name = "book_id")
-            , inverseJoinColumns = @JoinColumn(name = "genre_id"))
-    private Set<Genre> genres;
+    @ManyToOne(targetEntity = Genre.class, fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
 }

@@ -7,6 +7,16 @@ spring:
       data-locations: data.sql
       schema-locations: schema.sql
 
+  shell:
+    interactive:
+      enabled: true
+    noninteractive:
+      enabled: false
+
+    command:
+      version:
+        enabled: false
+
   jpa:
     generate-ddl: false
     hibernate:
@@ -23,3 +33,13 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: true
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: library
+
+  batch:
+    job:
+      enabled: false
