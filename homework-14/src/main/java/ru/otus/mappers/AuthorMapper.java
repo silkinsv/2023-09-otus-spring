@@ -9,6 +9,6 @@ import ru.otus.models.entities.Author;
 @RequiredArgsConstructor
 public class AuthorMapper {
     public AuthorDocument toDocument(Author author) {
-        return new AuthorDocument(author.getFullName(), author.getId());
+        return new AuthorDocument(author.getId().toString(), author.getFullName());
     }
 }

@@ -9,6 +9,6 @@ import ru.otus.models.entities.Genre;
 @RequiredArgsConstructor
 public class GenreMapper {
     public GenreDocument toDocument(Genre genre) {
-        return new GenreDocument(genre.getName(), genre.getId());
+        return new GenreDocument(genre.getId().toString(), genre.getName());
     }
 }

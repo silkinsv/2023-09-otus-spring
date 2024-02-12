@@ -13,21 +13,17 @@ import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.mappers.AuthorMapper;
 import ru.otus.mappers.BookMapper;
@@ -72,21 +68,10 @@ public class JobConfig {
                                  Step bookMigrationStep) {
         return new JobBuilder(IMPORT_LIBRARY_JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .flow(dropMongoDBStep())
-                .next(authorAndGenreMigrationFlow)
+                .start(authorAndGenreMigrationFlow)
                 .next(bookMigrationStep)
-                .next(dropMigrationIdsStep())
                 .end()
                 .build();
-    }
-
-    @Bean
-    public TaskletStep dropMongoDBStep() {
-        return new StepBuilder("dropMongoDBStep", jobRepository)
-                .tasklet((stepContribution, chunkContext) -> {
-                    mongoTemplate.getDb().drop();
-                    return RepeatStatus.FINISHED;
-                }, platformTransactionManager).build();
     }
 
     @Bean
@@ -215,14 +200,7 @@ public class JobConfig {
     @StepScope
     @Bean
     public ItemProcessor<Book, BookDocument> bookProcessor() {
-        return new ItemProcessor<Book, BookDocument>() {
-            @Override
-            public BookDocument process(Book book) throws Exception {
-                return bookMapper.toDocument(book,
-                        authorRepository.findFirstByMigrationId(book.getAuthor().getId()).get(),
-                        genreRepository.findFirstByMigrationId(book.getGenre().getId()).get());
-            }
-        };
+        return bookMapper::toDocument;
     }
 
     @StepScope
@@ -231,19 +209,6 @@ public class JobConfig {
         return new MongoItemWriterBuilder<BookDocument>()
                 .collection("books")
                 .template(mongoTemplate)
-                .build();
-    }
-
-    @Bean
-    public TaskletStep dropMigrationIdsStep() {
-        return new StepBuilder("dropMigrationIdsStep", jobRepository)
-                .tasklet((stepContribution, chunkContext) -> {
-                    var query = new Query();
-                    var update = new Update().unset("migrationId");
-                    mongoTemplate.findAndModify(query, update, GenreDocument.class);
-                    mongoTemplate.findAndModify(query, update, AuthorDocument.class);
-                    return RepeatStatus.FINISHED;
-                }, platformTransactionManager)
                 .build();
     }
 }

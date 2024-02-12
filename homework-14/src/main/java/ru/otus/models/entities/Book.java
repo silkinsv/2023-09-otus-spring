@@ -6,9 +6,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
-import jakarta.persistence.NamedEntityGraphs;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
@@ -17,15 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 
-@NamedEntityGraphs(value = {
-        @NamedEntityGraph(name = Book.WITH_AUTHOR_GENRES_GRAPH, attributeNodes = {
-                @NamedAttributeNode("author"),
-                @NamedAttributeNode("genre")
-        }),
-        @NamedEntityGraph(name = Book.WITH_AUTHOR_GRAPH, attributeNodes = {
-                @NamedAttributeNode("author")
-        })
-})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

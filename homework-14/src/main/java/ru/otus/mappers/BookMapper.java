@@ -10,7 +10,10 @@ import ru.otus.models.entities.Book;
 @Component
 @RequiredArgsConstructor
 public class BookMapper {
-    public BookDocument toDocument(Book book, AuthorDocument authorDocument, GenreDocument genreDocument) {
-        return new BookDocument(book.getTitle(), authorDocument, genreDocument);
+    public BookDocument toDocument(Book book) {
+        return new BookDocument(book.getId().toString(),
+                book.getTitle(),
+                new AuthorDocument(book.getAuthor().getId().toString(), book.getAuthor().getFullName()),
+                new GenreDocument(book.getGenre().getId().toString(), book.getGenre().getName()));
     }
 }

@@ -15,11 +15,4 @@ public class GenreDocument {
     private String id;
 
     private String name;
-
-    private Long migrationId;
-
-    public GenreDocument(String name, Long migrationId) {
-        this.name = name;
-        this.migrationId = migrationId;
-    }
 }

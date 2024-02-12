@@ -15,11 +15,4 @@ public class AuthorDocument {
     private String id;
 
     private String fullName;
-
-    private Long migrationId;
-
-    public AuthorDocument(String fullName, Long migrationId) {
-        this.fullName = fullName;
-        this.migrationId = migrationId;
-    }
 }
