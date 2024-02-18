@@ -22,3 +22,4 @@
 | Spring Batch                                                                           | homework-14              |
 | Spring Integration: Endpoints и Flow Components                                        | homework-15              |
 | Монолиты vs. Microservices (Round 2), Spring Boot Actuator - must have в микросервисах | homework-16              |
+| Docker, оркестрация                                                                    | homework-17              |

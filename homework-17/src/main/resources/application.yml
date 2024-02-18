@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db
+    username: postgres
+    password: postgres
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  jmx:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      # change base path from default "actuator" to monitor
+      base-path: /monitor
+      exposure:
+        include: metrics,health,logfile
+  endpoint:
+    health:
+      # display health checks with details
+      show-details: always
+    logfile:
+      external-file: ${logging.file.name}
+  # enable all default health check
+  health:
+    defaults:
+      enabled: true
+logging:
+  file:
+    name: ./logs/library-log.log
+  pattern:
+    file: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n"
+  level:
+    root: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
