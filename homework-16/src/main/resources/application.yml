@@ -1,0 +1,61 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:maindb
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      schema-locations: classpath:schema.sql
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jmx:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      # change base path from default "actuator" to monitor
+      base-path: /monitor
+      exposure:
+        include: metrics,health,logfile
+  endpoint:
+    health:
+      # display health checks with details
+      show-details: always
+    logfile:
+      external-file: ${logging.file.name}
+  # enable all default health check
+  health:
+    defaults:
+      enabled: true
+logging:
+  file:
+    name: ./logs/library-log.log
+  pattern:
+    file: "%d{yyyy-MMM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n"
+  level:
+    root: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
