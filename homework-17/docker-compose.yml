@@ -1,21 +1,21 @@
 version: '3'
 services:
-  app:
+  library-service:
     build:
       context: .
-      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://library-db:5432/db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
     depends_on:
-      - postgres
-  postgres:
+      - library-db
+
+  library-db:
     image: "postgres:13"
     ports:
-      - "5432:5432"
+      - "6432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

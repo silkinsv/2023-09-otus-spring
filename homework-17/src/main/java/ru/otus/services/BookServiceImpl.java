@@ -71,11 +71,6 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    @Override
-    public long count() {
-        return bookRepository.count();
-    }
-
     private Author getAuthorById(long authorId) {
         return authorRepository.findById(authorId)
                 .orElseThrow(() -> new NotFoundException("Author with id %d not found".formatted(authorId)));

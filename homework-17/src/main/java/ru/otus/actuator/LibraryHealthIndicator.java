@@ -5,17 +5,17 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.stereotype.Component;
-import ru.otus.services.BookService;
+import ru.otus.repositories.BookRepository;
 
 @Component
 @RequiredArgsConstructor
 public class LibraryHealthIndicator implements HealthIndicator {
 
-    private final BookService bookService;
+    private final BookRepository bookRepository;
 
     @Override
     public Health health() {
-        long bookCount = bookService.count();
+        long bookCount = bookRepository.count();
         if (bookCount == 0) {
             String message = "В библиотеке отсутствуют книги";
             return Health.down()
