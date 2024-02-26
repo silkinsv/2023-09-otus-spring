@@ -15,17 +15,23 @@ public class LibraryHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        long bookCount = bookRepository.count();
+        long bookCount;
+        String message;
+        try {
+            bookCount = bookRepository.count();
+        } catch (RuntimeException ex) {
+            message = ex.getMessage();
+            return Health.down().status(Status.DOWN).withDetail("message", message)
+                    .build();
+        }
+
         if (bookCount == 0) {
-            String message = "В библиотеке отсутствуют книги";
-            return Health.down()
-                    .status(Status.DOWN)
-                    .withDetail("message", message)
+            message = "В библиотеке отсутствуют книги";
+            return Health.down().status(Status.DOWN).withDetail("message", message)
                     .build();
         } else {
-            String message = "Все в порядке. Книги есть";
-            return Health.up()
-                    .withDetail("message", message)
+            message = "Все в порядке. Книги есть";
+            return Health.up().withDetail("message", message)
                     .build();
         }
     }
