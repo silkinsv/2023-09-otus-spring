@@ -55,3 +55,17 @@ logging:
     org:
       hibernate:
         SQL: DEBUG
+
+resilience4j.circuitbreaker:
+  metrics:
+    enabled: true
+  instances:
+    library:
+      baseConfig: default
+
+  configs:
+    default:
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      register-health-indicator: true
+

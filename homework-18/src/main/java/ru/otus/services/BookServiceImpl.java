@@ -1,11 +1,15 @@
 package ru.otus.services;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
 import ru.otus.dto.UpdateBookDto;
+import ru.otus.dto.AuthorDto;
+import ru.otus.dto.GenreDto;
 import ru.otus.exceptions.NotFoundException;
 import ru.otus.mappers.BookMapper;
 import ru.otus.models.Author;
@@ -19,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
@@ -32,6 +37,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
     public BookDto findById(long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toDto)
@@ -40,6 +46,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
     public List<BookDto> findAll() {
         return bookRepository.findAll()
                 .stream()
@@ -49,14 +56,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book create(CreateBookDto bookDto) {
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
+    public BookDto create(CreateBookDto bookDto) {
         var author = getAuthorById(bookDto.getAuthorId());
         var genres = getGenresByIds(bookDto.getGenreIds());
-        return bookRepository.save(bookMapper.toEntity(bookDto, author, genres));
+        return bookMapper.toDto(bookRepository.save(bookMapper.toEntity(bookDto, author, genres)));
     }
 
     @Override
     @Transactional
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
     public Book update(UpdateBookDto bookDto) {
         bookRepository.findById(bookDto.getId())
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookDto.getId())));
@@ -67,6 +76,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
     public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
@@ -85,5 +95,16 @@ public class BookServiceImpl implements BookService {
             throw new NotFoundException("Genres with ids %s not found".formatted(genresIds));
         }
         return new HashSet<>(genres);
+    }
+
+    private BookDto fallbackBook(Throwable throwable) {
+        log.error("Произошла ошибка при обращении в БД", throwable);
+        return getEmptyBookDto();
+    }
+
+    private BookDto getEmptyBookDto() {
+        return new BookDto(-1L, "N/A",
+                new AuthorDto(-1L, "N/A"),
+                new GenreDto(-1L, "N/A"));
     }
 }

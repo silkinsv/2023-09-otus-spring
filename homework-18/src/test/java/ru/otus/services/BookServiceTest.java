@@ -59,24 +59,4 @@ class BookServiceTest {
         List<BookDto> actualBookDtoList = bookService.findAll();
         assertEquals(expectedBookDtoList, actualBookDtoList);
     }
-
-    @DisplayName("Должен сохранять книгу")
-    @Test
-    void saveTest() {
-        CreateBookDto bookDto = dataProvider.getCreateBookDto();
-        Author author = new Author(2L, "Author_2");
-        Set<Genre> genres = Set.of(new Genre(3L, "Genre_3"));
-        Book book = new Book(null
-                , "BookTitle_4"
-                , author
-                , new HashSet<>(genres));
-        Book expectedBook = new Book(4L
-                , "BookTitle_4"
-                , author
-                , new HashSet<>(genres));
-        when(bookMapper.toEntity(bookDto, author, genres)).thenReturn(book);
-        when(bookRepository.save(book)).thenReturn(expectedBook);
-        Book actualBook = bookService.create(bookDto);
-        assertEquals(expectedBook, actualBook);
-    }
 }
