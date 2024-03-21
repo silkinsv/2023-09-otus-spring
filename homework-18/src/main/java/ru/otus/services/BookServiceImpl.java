@@ -5,16 +5,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
 import ru.otus.dto.UpdateBookDto;
 import ru.otus.dto.AuthorDto;
 import ru.otus.dto.GenreDto;
+import ru.otus.exceptions.DataBaseErrorException;
 import ru.otus.exceptions.NotFoundException;
 import ru.otus.mappers.BookMapper;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
 import ru.otus.models.Genre;
+import ru.otus.models.Response;
 import ru.otus.repositories.AuthorRepository;
 import ru.otus.repositories.BookRepository;
 import ru.otus.repositories.GenreRepository;
@@ -46,7 +49,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBooks")
     public List<BookDto> findAll() {
         return bookRepository.findAll()
                 .stream()
@@ -65,7 +68,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBookException")
     public Book update(UpdateBookDto bookDto) {
         bookRepository.findById(bookDto.getId())
                 .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookDto.getId())));
@@ -76,7 +79,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBook")
+    @CircuitBreaker(name = "library", fallbackMethod = "fallbackBookException")
     public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
@@ -97,14 +100,34 @@ public class BookServiceImpl implements BookService {
         return new HashSet<>(genres);
     }
 
-    private BookDto fallbackBook(Throwable throwable) {
+    private void fallbackBookException (long id, Throwable throwable) {
+        log.error("Произошла ошибка при обращении в БД", throwable);
+        throw new DataBaseErrorException(throwable.getMessage());
+    }
+
+    private Book fallbackBookException (UpdateBookDto bookDto, Throwable throwable) {
+        log.error("Произошла ошибка при обращении в БД", throwable);
+        throw new DataBaseErrorException(throwable.getMessage());
+    }
+
+    public BookDto fallbackBook(Throwable throwable) {
         log.error("Произошла ошибка при обращении в БД", throwable);
         return getEmptyBookDto();
+    }
+
+    private List<BookDto> fallbackBooks(Throwable throwable) {
+        log.error("Произошла ошибка при обращении в БД", throwable);
+        return List.of(getEmptyBookDto());
     }
 
     private BookDto getEmptyBookDto() {
         return new BookDto(-1L, "N/A",
                 new AuthorDto(-1L, "N/A"),
                 new GenreDto(-1L, "N/A"));
+    }
+
+    @ExceptionHandler(DataBaseErrorException.class)
+    public Response handleException(DataBaseErrorException e) {
+        return new Response(e.getMessage());
     }
 }

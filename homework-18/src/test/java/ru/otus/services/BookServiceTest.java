@@ -1,12 +1,18 @@
 package ru.otus.services;
 
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import ru.otus.dto.AuthorDto;
 import ru.otus.dto.BookDto;
 import ru.otus.dto.CreateBookDto;
+import ru.otus.dto.GenreDto;
+import ru.otus.exceptions.NotFoundException;
 import ru.otus.mappers.BookMapper;
 import ru.otus.models.Author;
 import ru.otus.models.Book;
@@ -17,13 +23,18 @@ import ru.otus.utils.DataProvider;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Тестирование Book Service")
 @SpringBootTest
 class BookServiceTest {
     @MockBean
     BookRepository bookRepository;
+
+    @SpyBean
+    BookService bookServiceMock;
 
     @MockBean
     BookMapper bookMapper;
@@ -34,6 +45,9 @@ class BookServiceTest {
     final DataProvider dataProvider = new DataProvider();
 
     final long FIRST_BOOK_ID = 1;
+
+//    @Autowired
+//    protected CircuitBreakerRegistry registry;
 
     @DisplayName("Должен возвращать книгу по Id")
     @Test
@@ -58,5 +72,17 @@ class BookServiceTest {
         when(bookMapper.toDto(expectedBookList.get(2))).thenReturn(expectedBookDtoList.get(2));
         List<BookDto> actualBookDtoList = bookService.findAll();
         assertEquals(expectedBookDtoList, actualBookDtoList);
+    }
+
+    @Test
+    void shouldReturnEmptyBookList() {
+        BookDto expectedResult = new BookDto(-1L, "N/A",
+                new AuthorDto(-1L, "N/A"),
+                new GenreDto(-1L, "N/A"));
+
+        when(bookRepository.findById(100)).thenReturn(Optional.empty());
+        BookDto actualResult = bookService.findById(100);
+        verify(bookServiceMock).fallbackBook(any(NotFoundException.class));
+        assertEquals(actualResult, expectedResult);
     }
 }

@@ -17,4 +17,6 @@ public interface BookService {
     Book update(UpdateBookDto bookDto);
 
     void deleteById(long id);
+
+    BookDto fallbackBook(Throwable throwable);
 }
